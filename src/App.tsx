@@ -1,5 +1,12 @@
+import { RouterProvider } from 'react-router'
+import { routes } from './config/router'
+
 function App() {
-  return <>Hello</>;
+    return (
+        <div className="bg-gray-950 w-full h-dvh overflow-x-hidden overflow-y-auto">
+            <RouterProvider router={routes}></RouterProvider>
+        </div>
+    )
 }
 
-export default App;
+export default App
