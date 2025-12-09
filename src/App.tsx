@@ -3,7 +3,7 @@ import { routes } from './config/router'
 
 function App() {
     return (
-        <div className="bg-gray-950 w-full h-dvh overflow-x-hidden overflow-y-auto">
+        <div className="bg-surface-700 w-full h-dvh overflow-x-hidden overflow-y-auto">
             <RouterProvider router={routes}></RouterProvider>
         </div>
     )

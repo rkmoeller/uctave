@@ -7,4 +7,7 @@
 }
 
 @theme {
+    --color-primary: #00d5be;
+    --color-surface-900: #0c0c0c;
+    --color-surface-700: #121212;
 }

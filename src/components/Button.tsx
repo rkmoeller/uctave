@@ -7,7 +7,7 @@ const buttonVariants = cva(
     {
         variants: {
             intent: {
-                primary: 'bg-teal-500 hover:opacity-95  text-white',
+                primary: 'bg-primary hover:opacity-95 text-white',
                 secondary: 'bg-white text-gray-800 border-gray-400',
             },
             size: {
