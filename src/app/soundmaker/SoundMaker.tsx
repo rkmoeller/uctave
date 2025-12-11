@@ -14,7 +14,7 @@ import { useCallback, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import { Play } from 'lucide-react';
 import * as Tone from 'tone';
-import { nodeTypes } from './nodes/NodeTypes';
+import { nodeTypes } from '../../model/NodeTypes';
 
 const initialNodes: Node[] = [
     {

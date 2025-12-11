@@ -1,10 +1,4 @@
-import {
-    Handle,
-    Position,
-    useNodes,
-    useReactFlow,
-    type NodeProps,
-} from '@xyflow/react';
+import { Handle, Position, useReactFlow, type NodeProps } from '@xyflow/react';
 import * as Tone from 'tone';
 import type { SynthNodeType } from '../../../model/types/NodeTypes';
 import { useSynthNode } from '../../../hooks/useSynthNode';
@@ -13,7 +7,7 @@ import {
     ContextMenuItem,
     ContextMenuPopup,
 } from '../../../components/ContextMenu';
-import { GripVertical, Trash2 } from 'lucide-react';
+import { GripVertical, Play, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export const SynthNode = ({ id }: NodeProps<SynthNodeType>) => {
@@ -22,10 +16,9 @@ export const SynthNode = ({ id }: NodeProps<SynthNodeType>) => {
 
     const [detune, setDetune] = useState<number>(0);
 
-    useEffect(
-        () => updateNodeData(id, { value: synth.current }),
-        [synth.current]
-    );
+    useEffect(() => {
+        updateNodeData(id, { value: synth.current });
+    }, [synth.current]);
 
     const play = () => {
         synth.current.triggerAttackRelease('C2', '8n').toDestination();
@@ -39,6 +32,8 @@ export const SynthNode = ({ id }: NodeProps<SynthNodeType>) => {
                         <div className="text-xs ">Synth {id}</div>
                         <GripVertical className=" text-neutral-500" size={14} />
                     </div>
+
+                    <div />
 
                     <div className="p-2">
                         <input
@@ -55,7 +50,12 @@ export const SynthNode = ({ id }: NodeProps<SynthNodeType>) => {
                     </div>
 
                     <div className="bg-neutral-800 rounded-b-md p-2 flex justify-between">
-                        <div className="text-xs "></div>
+                        <button onClick={play}>
+                            <Play
+                                size={16}
+                                className="opacity-30 hover:opacity-100 cursor-pointer hover:fill-primary hover:text-primary"
+                            />
+                        </button>
                     </div>
 
                     <Handle type="source" position={Position.Bottom} />

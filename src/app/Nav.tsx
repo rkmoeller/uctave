@@ -9,7 +9,7 @@ const navItems = [
     },
     {
         path: '/app/soundmaker',
-        text: 'Soundmaker',
+        text: 'Sound Designer',
     },
 ];
 
@@ -29,7 +29,7 @@ const Nav = () => {
                         <span
                             className={cn(
                                 'text-white',
-                                isActive && 'text-red-400'
+                                isActive && 'text-primary'
                             )}
                         >
                             {item.text}
