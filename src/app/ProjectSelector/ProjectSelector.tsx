@@ -10,7 +10,9 @@ import { Link } from 'react-router';
 import { ProjectListItem } from './ProjectListItem';
 
 export const ProjectSelector = () => {
-    const projects = useLiveQuery(() => db.projects.toArray());
+    const projects = useLiveQuery(async () =>
+        (await db.projects.toArray()).sort((a, b) => a.created.getTime() - b.created.getTime())
+    );
     const [tempProjectTitle, setTempProjectTitle] = useState<string | undefined>();
 
     const createProject = async () => {

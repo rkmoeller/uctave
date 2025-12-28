@@ -28,7 +28,7 @@ export const ProjectListItem = ({ project, onDelete, onEdit }: ProjectListItemPr
     return (
         <div
             className={cn(
-                'bg-zinc-800/50 rounded-lg flex items-center justify-between gap-2 text-zinc-100 font-semibold outline outline-transparent cursor-pointer hover-within:hover:outline-primary',
+                'bg-zinc-800/50 rounded-lg flex items-center justify-between gap-2  outline outline-transparent cursor-pointer hover-within:hover:outline-primary',
                 hovered && !isEditing && 'outline-primary'
             )}
         >
@@ -39,13 +39,16 @@ export const ProjectListItem = ({ project, onDelete, onEdit }: ProjectListItemPr
                 onMouseLeave={() => setHovered(false)}
             >
                 {!isEditing ? (
-                    <span>{project.title}</span>
+                    <div className="flex flex-col">
+                        <span className="font-semibold text-zinc-100">{project.title}</span>
+                        <span className="text-zinc-500 text-sm">{project.created.toLocaleString()}</span>
+                    </div>
                 ) : (
                     <Input
                         className="font-normal"
                         placeholder="Project title.."
                         value={tempProject.title}
-                        onChange={(e) => setTempProject({ ...tempProject, title: e.target.value })}
+                        onChange={(e) => setTempProject({ ...tempProject, title: e.target.value, updated: new Date() })}
                     />
                 )}
             </div>
