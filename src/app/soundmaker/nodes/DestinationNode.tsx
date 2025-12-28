@@ -1,25 +1,12 @@
-import {
-    Handle,
-    Position,
-    useNodeConnections,
-    useNodesData,
-} from '@xyflow/react';
+import { Handle, Position } from '@xyflow/react';
 import { Headphones } from 'lucide-react';
-import { useEffect } from 'react';
+import { useAudioGraph } from '../../../hooks/useAudioGraph';
 
 export const DestinationNode = () => {
-    const connections = useNodeConnections({
-        handleType: 'target',
-    });
-
-    const nodesData = useNodesData(connections.map((c) => c.source));
-
-    useEffect(() => console.log(nodesData), [nodesData]);
+    const audioGraph = useAudioGraph();
 
     const play = () => {
-        nodesData.forEach((item) => {
-            item.data.value.triggerAttackRelease('C2', '8n').toDestination();
-        });
+        audioGraph.current?.play();
     };
 
     return (

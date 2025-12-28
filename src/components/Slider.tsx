@@ -1,4 +1,4 @@
-import { Slider as BaseSlider } from '@base-ui-components/react/slider';
+import { Slider as BaseSlider } from '@base-ui/react';
 
 interface SliderProps {
     value: number;
@@ -11,12 +11,7 @@ export const Slider = (props: SliderProps) => {
     const { value, onChange, min = 0, max = 100 } = props;
 
     return (
-        <BaseSlider.Root
-            value={value}
-            onValueChange={onChange}
-            min={min}
-            max={max}
-        >
+        <BaseSlider.Root value={value} onValueChange={onChange} min={min} max={max}>
             <BaseSlider.Control>
                 <div className="flex items-center gap-4 ">
                     <BaseSlider.Track className="bg-white/10 h-1.5 w-full rounded-full">

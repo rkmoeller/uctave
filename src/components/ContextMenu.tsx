@@ -1,11 +1,7 @@
-import {
-    ContextMenu,
-    type MenuItemProps,
-    type MenuPopupProps,
-} from '@base-ui-components/react';
+import { ContextMenu } from '@base-ui/react';
 import { cn } from '../helpers/cn';
 
-export const ContextMenuItem = (props: MenuItemProps) => {
+export const ContextMenuItem = (props: ContextMenu.Item.Props) => {
     return (
         <ContextMenu.Item
             {...props}
@@ -17,7 +13,7 @@ export const ContextMenuItem = (props: MenuItemProps) => {
     );
 };
 
-export const ContextMenuPopup = (props: MenuPopupProps) => {
+export const ContextMenuPopup = (props: ContextMenu.Popup.Props) => {
     return (
         <ContextMenu.Popup
             {...props}
