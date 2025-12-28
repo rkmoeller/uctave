@@ -2,7 +2,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import type { DistortionNodeType } from '../../../model/types/NodeTypes';
 
 import { ContextMenuItem, ContextMenuPopup } from '../../../components/ContextMenu';
-import { GripVertical, Play, Trash2 } from 'lucide-react';
+import { GripVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import * as Tone from 'tone';

@@ -2,23 +2,17 @@ import type { PropsWithChildren } from 'react';
 import {
     MenuArrow,
     MenuBackdrop,
-    MenuCheckboxItem,
     MenuGroup,
     MenuGroupLabel,
     MenuItem,
     MenuPopup,
     MenuPortal,
     MenuPositioner,
-    MenuRadioGroup,
-    MenuRadioItem,
     MenuRoot,
-    MenuSeparator,
     MenuSubmenuRoot,
     MenuSubmenuTrigger,
     MenuTrigger,
 } from '../../../components/Menu';
-
-interface ToolbarMenuProps {}
 
 export const ToolbarMenu = (props: PropsWithChildren) => {
     return (
