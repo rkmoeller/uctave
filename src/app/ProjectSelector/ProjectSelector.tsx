@@ -43,7 +43,7 @@ export const ProjectSelector = () => {
                     <div className="rounded-lg bg-primary w-9 h-9 flex items-center justify-center logo">
                         <AudioLines className="text-zinc-900" size={22} />
                     </div>
-                    <div className=" text-white font-bold title">Uptone</div>
+                    <div className=" text-white font-bold title">Oxillate</div>
                 </div>
             </Link>
             <div className="max-w-[800px] min-h-96 w-full m-auto">

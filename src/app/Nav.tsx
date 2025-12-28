@@ -32,7 +32,7 @@ const Nav = () => {
                     <div className="rounded-lg bg-primary w-9 h-9 flex items-center justify-center">
                         <AudioLines className="text-zinc-900" size={22} />
                     </div>
-                    <div className=" text-white font-bold">Uptone</div>
+                    <div className=" text-white font-bold">Oxillate</div>
                 </div>
             </Link>
 

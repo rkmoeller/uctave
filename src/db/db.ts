@@ -1,7 +1,7 @@
 import { Dexie, type EntityTable } from 'dexie';
 import type { Project } from '../model/types/Project';
 
-const db = new Dexie('uptone') as Dexie & {
+const db = new Dexie('oxillate') as Dexie & {
     projects: EntityTable<Project, 'id'>;
 };
 
