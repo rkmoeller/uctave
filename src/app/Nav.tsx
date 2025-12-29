@@ -32,11 +32,13 @@ const Nav = () => {
                     <div className="rounded-lg bg-primary w-9 h-9 flex items-center justify-center">
                         <AudioLines className="text-zinc-900" size={22} />
                     </div>
-                    <div className=" text-white font-bold">Oxillate</div>
+                    <div className=" text-white font-bold">Uctave</div>
                 </div>
             </Link>
 
-            <div className="border-y border-white/5 py-6  w-[95%] self-center text-zinc-100">{project?.title}</div>
+            <div className="border-y border-white/5 py-4  w-[95%] self-center text-zinc-100">
+                <div className="bg-zinc-800/50 p-4 rounded-md text-sm text-zinc-">{project?.title}</div>
+            </div>
 
             {/* <div className="h-px w-[95%] my-1 self-center bg-white/5" /> */}
 
