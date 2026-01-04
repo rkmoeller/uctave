@@ -88,11 +88,12 @@ export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
             <ContextMenu.Portal>
                 <ContextMenu.Positioner>
                     <ContextMenuPopup className="min-w-[200px]">
+                        <ContextMenuItem>Rename</ContextMenuItem>
+                        <ContextMenuItem>Change target</ContextMenuItem>
                         <ContextMenuItem className="group flex justify-between" onClick={deleteNode}>
                             Delete
                             <Trash size={16} className="group-hover:text-rose-400" />
                         </ContextMenuItem>
-                        <ContextMenuItem>Change target</ContextMenuItem>
                     </ContextMenuPopup>
                 </ContextMenu.Positioner>
             </ContextMenu.Portal>

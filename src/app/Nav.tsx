@@ -1,12 +1,19 @@
-import { AudioLines, Brush, FileMusic, PanelTopBottomDashed } from 'lucide-react';
+import { AudioLines, Brush, Download, FileMusic, PanelTopBottomDashed } from 'lucide-react';
 import { Link, NavLink } from 'react-router';
-import { cn } from '../helpers/cn';
+
 import {} from 'lucide-react';
 import { useActiveProject } from '../hooks/useProject';
+import { cn } from '../helpers/cn';
+import Button from '../components/Button';
 
 const navItems = [
     {
-        path: 'app',
+        path: 'overview',
+        text: 'Overview',
+        icon: <PanelTopBottomDashed size={16} />,
+    },
+    {
+        path: 'arrangement',
         text: 'Arrangement',
         icon: <PanelTopBottomDashed size={16} />,
     },
@@ -16,8 +23,8 @@ const navItems = [
         icon: <Brush size={16} />,
     },
     {
-        path: 'files',
-        text: 'Files',
+        path: 'library',
+        text: 'Library',
         icon: <FileMusic size={16} />,
     },
 ];
@@ -25,35 +32,43 @@ const navItems = [
 const Nav = () => {
     const project = useActiveProject();
 
-    return (
-        <div className="flex flex-col w-64 shrink-0 p-4 gap-4">
-            <Link to="/app">
-                <div className="flex h-fit gap-3 items-center">
-                    <div className="rounded-lg bg-primary w-9 h-9 flex items-center justify-center">
-                        <AudioLines className="text-zinc-900" size={22} />
-                    </div>
-                    <div className=" text-white font-bold">Uctave</div>
-                </div>
-            </Link>
+    if (!project) {
+        return <>pending</>;
+    }
 
-            <div className="border-y border-white/5 py-4  w-[95%] self-center text-zinc-100">
-                <div className="bg-zinc-800/50 p-4 rounded-md text-sm text-zinc-">{project?.title}</div>
+    return (
+        <div className="flex items-center justify-between w-full shrink-0 p-3 gap-4 border-b border-l border-zinc-800">
+            <div className="flex items-center gap-4">
+                <Link to="/app">
+                    <div className="flex h-fit gap-3 items-center">
+                        <div className="rounded-lg bg-primary hover:bg-primary-hover w-8 h-8 flex items-center justify-center">
+                            <AudioLines className="text-zinc-900" size={20} />
+                        </div>
+                        <div>
+                            <div className="text-white/80 hover:text-white font-medium text-xs bg-zinc-800 rounded-full px-3 py-1">
+                                {project.title}
+                            </div>
+                            {/* <div className="text-white/30 text-xs">{project?.updated.toLocaleString()}</div> */}
+                        </div>
+                    </div>
+                </Link>
             </div>
 
-            {/* <div className="h-px w-[95%] my-1 self-center bg-white/5" /> */}
-
-            <div className="flex flex-col gap-1.5 w-full">
+            <div className="flex rounded-full gap-1.5  bg-zinc-800 px-2 py-1.5">
                 {navItems.map((item) => (
-                    <NavLink to={item.path} key={item.path} end>
+                    <NavLink to={item.path} key={item.path} end viewTransition>
                         {({ isActive }) => {
                             return (
                                 <div
                                     className={cn(
-                                        'text-white text-sm hover:bg-zinc-800 px-2 py-1.5 rounded-md flex gap-3 items-center',
-                                        isActive && 'text-primary bg-zinc-800/80'
+                                        'tab text-xs px-3 py-1 rounded-full text-white/80 text-center hover:bg-zinc-700/50 hover:text-white transition-all',
+                                        isActive &&
+                                            'bg-primary hover:bg-primary-hover text-zinc-800 hover:text-zinc-900 font-semibold'
                                     )}
+                                    style={{
+                                        viewTransitionName: isActive ? 'active-tab' : undefined,
+                                    }}
                                 >
-                                    {item.icon}
                                     <span className="translate-y-px">{item.text}</span>
                                 </div>
                             );
@@ -62,7 +77,10 @@ const Nav = () => {
                 ))}
             </div>
 
-            {/* <div className="w-full h-px bg-neutral-800"></div> */}
+            <Button className="rounded-full text-sm" size="extrasmall" intent="secondary" disabled>
+                <Download size={16} />
+                Export
+            </Button>
         </div>
     );
 };

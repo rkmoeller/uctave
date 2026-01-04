@@ -16,11 +16,11 @@ import '@xyflow/react/dist/style.css';
 import { nodeTypes } from '../../model/NodeTypes';
 import { initialEdges, initialNodes } from './initialData';
 import { useAudioGraph } from '../../hooks/useAudioGraph';
-import { Toolbar } from './Toolbar/Toolbar';
+import { SoundDesignerToolbar } from './sounddesignertoolbar/SoundDesignerToolbar';
 import { useKeydown } from '../../hooks/useKeydown';
 import useSoundDesignerStore from '../../store/SoundDesignerStore';
 
-const SoundMaker = () => {
+const SoundDesigner = () => {
     const [nodes, setNodes] = useState(initialNodes);
     const [edges, setEdges] = useState(initialEdges);
 
@@ -30,8 +30,6 @@ const SoundMaker = () => {
     useAudioGraph();
 
     useKeydown('Delete', () => deleteElements({ nodes: selectedNodes }), [selectedNodes]);
-
-    console.log('HIT');
 
     const onNodesChange = useCallback(
         (changes: NodeChange<Node>[]) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -46,7 +44,7 @@ const SoundMaker = () => {
     }, []);
 
     return (
-        <div className="text-white w-full relative">
+        <div className="text-white w-fullf flex flex-col grow relative">
             <ReactFlow
                 nodeTypes={nodeTypes}
                 nodes={nodes}
@@ -59,15 +57,13 @@ const SoundMaker = () => {
                     setSelectedNodes([node]);
                 }}
                 defaultEdgeOptions={{ type: 'smoothstep', style: { color: 'red' } }}
-                onPaneClick={(e) => console.log(e)}
             >
                 <Background color="#313140" bgColor="#101012" variant={BackgroundVariant.Dots} />
             </ReactFlow>
 
-            {/* Toolbar */}
-            <Toolbar />
+            <SoundDesignerToolbar />
         </div>
     );
 };
 
-export default SoundMaker;
+export default SoundDesigner;

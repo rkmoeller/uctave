@@ -14,7 +14,7 @@ import {
     MenuTrigger,
 } from '../../../components/Menu';
 
-export const ToolbarMenu = (props: PropsWithChildren) => {
+export const SoundDesignerToolbarMenu = (props: PropsWithChildren) => {
     return (
         <MenuRoot>
             <MenuTrigger>{props.children}</MenuTrigger>

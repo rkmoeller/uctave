@@ -1,9 +1,11 @@
 import { createBrowserRouter } from 'react-router';
 import Frontpage from '../Frontpage';
 import Root from '../app/Root';
-import SoundMaker from '../app/soundmaker/SoundMaker';
-import { Files } from '../app/files/Files';
-import { ProjectSelector } from '../app/ProjectSelector/ProjectSelector';
+import SoundDesigner from '../app/soundmaker/SoundDesigner';
+import { ProjectSelector } from '../app/projectselector/ProjectSelector';
+import { Arrangement } from '../app/arrangement/Arrangement';
+import { Library } from '../app/library/Library';
+import { Overview } from '../app/overview/Overview';
 
 export const routes = createBrowserRouter([
     {
@@ -19,12 +21,20 @@ export const routes = createBrowserRouter([
         Component: Root,
         children: [
             {
-                path: 'sounddesigner',
-                Component: SoundMaker,
+                path: 'overview',
+                Component: Overview,
             },
             {
-                path: 'files',
-                Component: Files,
+                path: 'arrangement',
+                Component: Arrangement,
+            },
+            {
+                path: 'sounddesigner',
+                Component: SoundDesigner,
+            },
+            {
+                path: 'library',
+                Component: Library,
             },
         ],
     },

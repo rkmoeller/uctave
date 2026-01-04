@@ -27,6 +27,8 @@ export const initialNodes: Node[] = [
         position: { x: 50, y: 100 },
         data: {},
         type: 'destinationNode',
+        draggable: false,
+        dragHandle: '.drag-handle',
     },
 ];
 

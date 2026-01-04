@@ -4,8 +4,7 @@ import db from '../db/db';
 
 export const useActiveProject = () => {
     const { projectid } = useParams();
-
-    const project = useLiveQuery(() => db.projects.get({ id: projectid }));
+    const project = useLiveQuery(async () => await db.projects.get({ id: projectid }));
 
     return project;
 };

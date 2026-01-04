@@ -21,7 +21,7 @@ export const ProjectListItem = ({ project, onDelete, onEdit }: ProjectListItemPr
 
     const goto = () => {
         if (!isEditing) {
-            navigate(project.id);
+            navigate(`${project.id}/overview`);
         }
     };
 

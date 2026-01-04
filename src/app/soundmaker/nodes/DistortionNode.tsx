@@ -16,8 +16,8 @@ export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
     return (
         <ContextMenu.Root>
             <ContextMenu.Trigger>
-                <div className="bg-neutral-900 rounded-md w-52 text-neutral-100 hover:shadow-lg hover:shadow-primary/5 flex flex-col">
-                    <div className="bg-neutral-800 rounded-t-md p-2 flex justify-between drag-handle">
+                <div className="bg-zinc-900 rounded-md w-52 text-neutral-100 hover:shadow-lg hover:shadow-primary/5 flex flex-col">
+                    <div className="bg-zinc-800 rounded-t-md p-2 flex justify-between drag-handle">
                         <div className="text-xs ">Distortion {id}</div>
                         <GripVertical className=" text-neutral-500" size={14} />
                     </div>
@@ -41,7 +41,7 @@ export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
                         />
                     </div>
 
-                    <div className="bg-neutral-800 rounded-b-md p-2 flex justify-between" />
+                    <div className="bg-zinc-800 rounded-b-md p-2 flex justify-between" />
                     <Handle type="target" position={Position.Top} />
                     <Handle type="source" position={Position.Bottom} />
                 </div>
