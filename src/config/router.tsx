@@ -33,6 +33,10 @@ export const routes = createBrowserRouter([
                 Component: SoundDesigner,
             },
             {
+                path: 'sounddesigner/:soundid',
+                Component: SoundDesigner,
+            },
+            {
                 path: 'library',
                 Component: Library,
             },

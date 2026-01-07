@@ -5,24 +5,50 @@ import {
     Background,
     BackgroundVariant,
     ReactFlow,
+    useOnViewportChange,
     useReactFlow,
     type Edge,
     type EdgeChange,
     type Node,
     type NodeChange,
+    type Viewport,
 } from '@xyflow/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import { nodeTypes } from '../../model/NodeTypes';
-import { initialEdges, initialNodes } from './initialData';
+import { getDefaultSoundDesignerData } from './defaultData';
 import { useAudioGraph } from '../../hooks/useAudioGraph';
 import { SoundDesignerToolbar } from './sounddesignertoolbar/SoundDesignerToolbar';
 import { useKeydown } from '../../hooks/useKeydown';
 import useSoundDesignerStore from '../../store/SoundDesignerStore';
+import { ZoomIn } from 'lucide-react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { useParams } from 'react-router';
+import db from '../../db/db';
+import { createNodesAndEdgesFromPatch } from '../../helpers/soundHelpers';
 
 const SoundDesigner = () => {
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
+    const { soundid } = useParams();
+    const { getNode } = useReactFlow();
+
+    const sound = useLiveQuery(() => (soundid ? db.sounds.get({ id: soundid }) : undefined), [soundid]);
+    const { nodes: createdNodes, edges: createdEdges } = createNodesAndEdgesFromPatch(sound);
+
+    const [zoom, setZoom] = useState<number>(1);
+
+    const { defaultNodes, defaultEdges } = getDefaultSoundDesignerData();
+
+    const [nodes, setNodes] = useState<Node[]>(createdNodes.length > 0 ? createdNodes : defaultNodes);
+    const [edges, setEdges] = useState<Edge[]>(createdEdges.length > 0 ? createdEdges : defaultEdges);
+
+    useEffect(() => {
+        if (createdNodes.length) {
+            setNodes(createdNodes);
+        }
+        if (createdEdges.length) {
+            setEdges(createdEdges);
+        }
+    }, [createdNodes, createdEdges]);
 
     const { deleteElements } = useReactFlow();
     const { setSelectedNodes, selectedNodes } = useSoundDesignerStore();
@@ -30,6 +56,12 @@ const SoundDesigner = () => {
     useAudioGraph();
 
     useKeydown('Delete', () => deleteElements({ nodes: selectedNodes }), [selectedNodes]);
+
+    useOnViewportChange({
+        onChange: (viewport: Viewport) => {
+            setZoom(viewport.zoom);
+        },
+    });
 
     const onNodesChange = useCallback(
         (changes: NodeChange<Node>[]) => setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
@@ -49,15 +81,24 @@ const SoundDesigner = () => {
                 nodeTypes={nodeTypes}
                 nodes={nodes}
                 edges={edges}
+                zoomOnDoubleClick={false}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                defaultViewport={{ zoom: 1.2, x: 0, y: 0 }}
+                defaultViewport={{
+                    zoom: zoom,
+                    x: getNode('output')?.position.x ?? 0,
+                    y: getNode('output')?.position.y ?? 0,
+                }}
                 onNodeClick={(_, node) => {
                     setSelectedNodes([node]);
                 }}
-                defaultEdgeOptions={{ type: 'smoothstep', style: { color: 'red' } }}
+                defaultEdgeOptions={{ type: 'smoothstep' }}
             >
+                <div className="bg-white/10 text-white/60 px-3 py-1 absolute top-2 right-2 rounded-full text-xs font-semibold z-100 flex gap-1 items-center">
+                    <ZoomIn size={14} />
+                    {Math.floor(zoom * 100)}%
+                </div>
                 <Background color="#313140" bgColor="#101012" variant={BackgroundVariant.Dots} />
             </ReactFlow>
 

@@ -56,7 +56,7 @@ const Nav = () => {
 
             <div className="flex rounded-full gap-1.5  bg-zinc-800 px-2 py-1.5">
                 {navItems.map((item) => (
-                    <NavLink to={item.path} key={item.path} end viewTransition>
+                    <NavLink to={item.path} key={item.path} viewTransition>
                         {({ isActive }) => {
                             return (
                                 <div

@@ -1,23 +1,25 @@
-import type { Edge, Node } from '@xyflow/react';
 import * as Tone from 'tone';
 import type { NodeTypeNames } from '../../model/NodeTypes';
+import type { SynthNodeParams } from '../../model/types/NodeTypes';
+import { createSynthFromParams } from '../../helpers/nodeHelpers/nodeHelpers';
+import type { EdgePatch, NodePatch } from '../../model/types/SoundPatch';
 
 export class AudioGraph {
     // Holds references to all the ToneJS node objects
     toneNodes = new Map<string, any>();
 
     // Holds references to all the React Flow objects
-    agNodes = new Map<string, Node>();
-    agEdges = new Map<string, Edge>();
+    agNodes = new Map<string, NodePatch>();
+    agEdges = new Map<string, EdgePatch>();
 
     /**
      * Syncs the React Flow node-structure to the correct ToneJS state.
      * @param nodes A list of React Flow Nodes
      * @param edges A list of React Flow Edges
      */
-    sync(nodes: Node[], edges: Edge[]) {
-        const newNodes = new Map<string, Node>(nodes.map((n) => [n.id, n]));
-        const newEdges = new Map<string, Edge>(edges.map((e) => [e.id, e]));
+    public sync(nodes: NodePatch[], edges: EdgePatch[]) {
+        const newNodes = new Map<string, NodePatch>(nodes.map((n) => [n.id, n]));
+        const newEdges = new Map<string, EdgePatch>(edges.map((e) => [e.id, e]));
 
         this.updateNodes(newNodes);
         this.updateEdges(newEdges);
@@ -26,30 +28,34 @@ export class AudioGraph {
         this.agEdges = newEdges;
     }
 
-    updateNodes(nodes: Map<string, Node>) {
+    private updateNodes(nodes: Map<string, NodePatch>) {
         // Add new nodes
         for (const [id, node] of nodes) {
-            const exists = this.toneNodes.has(id);
+            const existingNode: Tone.ToneAudioNode | undefined = this.toneNodes.get(id);
 
-            if (!exists) {
+            if (!existingNode) {
                 this.toneNodes.set(id, this.createToneNode(node));
+            } else {
+                existingNode.set({ ...node.data });
             }
         }
 
         // Remove old nodes
-        for (const [id] of this.toneNodes.keys()) {
+        for (const [id, toneNode] of this.toneNodes) {
             if (!nodes.has(id)) {
                 this.toneNodes.delete(id);
+                toneNode.disconnect();
+                toneNode.dispose();
             }
         }
     }
 
-    updateEdges(edges: Map<string, Edge>) {
+    private updateEdges(edges: Map<string, EdgePatch>) {
         // Create connections based on new edges
         for (const [id] of edges) {
             if (!this.agEdges.has(id)) {
-                const sourceId = id.split('-')[0];
-                const targetId = id.split('-')[1];
+                const sourceId = id.split('->')[0];
+                const targetId = id.split('->')[1];
 
                 const source = this.toneNodes.get(sourceId);
                 const target = this.toneNodes.get(targetId);
@@ -76,16 +82,19 @@ export class AudioGraph {
         }
     }
 
-    updateParams<T>(id: string, newParams: T) {
+    public updateParams<T>(id: string, newParams: T) {
         const toneNode = this.toneNodes.get(id);
         toneNode.set(newParams);
     }
 
-    createToneNode(node: Node) {
-        const type: NodeTypeNames = node.type as NodeTypeNames;
+    private createToneNode(node: NodePatch) {
+        const type = node.type as NodeTypeNames;
         switch (type) {
-            case 'synthNode':
-                return new Tone.Synth({ ...node.data });
+            case 'synthNode': {
+                const params = node.data as SynthNodeParams;
+                return createSynthFromParams(params);
+            }
+
             case 'distortionNode':
                 return new Tone.Distortion({ ...node.data });
             case 'destinationNode': {
@@ -98,18 +107,18 @@ export class AudioGraph {
         }
     }
 
-    getToneNode(id: string) {
+    public getToneNode(id: string) {
         return this.toneNodes.get(id);
     }
 
-    isNodePlayable(node: any) {
+    private isNodePlayable(node: any) {
         if (typeof node.triggerAttackRelease === 'function') {
             return true;
         }
         return false;
     }
 
-    play() {
+    public play() {
         this.toneNodes.forEach((node) => {
             if (this.isNodePlayable(node)) {
                 node.triggerAttackRelease('c4', '8n');
@@ -117,11 +126,31 @@ export class AudioGraph {
         });
     }
 
-    playNode(id: string) {
+    public playNode(id: string) {
         const node = this.toneNodes.get(id);
         if (this.isNodePlayable(node)) {
             node.triggerAttackRelease('c4', '8n');
         }
+    }
+
+    public getPatch(): { nodes: NodePatch[]; edges: EdgePatch[] } {
+        const nodePatches: NodePatch[] = Array.from(this.agNodes).map(([id, node]) => ({
+            type: node.type,
+            id: id,
+            data: node.data,
+            position: node.position,
+        }));
+
+        const edgePatches: EdgePatch[] = Array.from(this.agEdges).map(([id, edge]) => ({
+            id: id,
+            source: edge.source,
+            target: edge.target,
+        }));
+
+        return {
+            nodes: nodePatches,
+            edges: edgePatches,
+        };
     }
 }
 

@@ -28,7 +28,7 @@ export const ProjectListItem = ({ project, onDelete, onEdit }: ProjectListItemPr
     return (
         <div
             className={cn(
-                'bg-zinc-800/50 rounded-lg flex items-center justify-between gap-2  outline outline-transparent cursor-pointer hover-within:hover:outline-primary',
+                'bg-zinc-800/50 rounded-lg flex items-center justify-between gap-2 outline-2 outline-transparent cursor-pointer hover-within:hover:outline-primary transition-all',
                 hovered && !isEditing && 'outline-primary'
             )}
         >

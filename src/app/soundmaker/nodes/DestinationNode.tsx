@@ -2,13 +2,16 @@ import { Handle, Position, useReactFlow, type Node } from '@xyflow/react';
 import { Headphones, LockOpen, Lock, GripVertical } from 'lucide-react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import { cn } from '../../../helpers/cn';
+import * as Tone from 'tone';
 
 export const DestinationNode = ({ id, draggable }: Node) => {
     const { updateNode } = useReactFlow();
     const audioGraph = useAudioGraph();
 
     const play = () => {
-        audioGraph.current?.play();
+        Tone.start().then(() => {
+            audioGraph.current?.play();
+        });
     };
 
     return (

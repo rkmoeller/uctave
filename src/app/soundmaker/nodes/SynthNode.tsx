@@ -1,26 +1,29 @@
 import { Handle, Position, useNodes, useReactFlow, type NodeProps } from '@xyflow/react';
 import type { SynthNodeType } from '../../../model/types/NodeTypes';
 import { ContextMenuItem, ContextMenuPopup } from '../../../components/ContextMenu';
-import { GripVertical, Play, Trash, Volume2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { GripVertical, Play, Trash } from 'lucide-react';
+import { useState } from 'react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import * as Tone from 'tone';
 import { ContextMenu } from '@base-ui/react/context-menu';
 import useSoundDesignerStore from '../../../store/SoundDesignerStore';
 import { cn } from '../../../helpers/cn';
+import { Knob } from '../../../components/Knob';
 
 export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
-    const { deleteElements } = useReactFlow();
-    const audioGraph = useAudioGraph();
-    const [detune, setDetune] = useState<number>(data.detune);
-    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const { deleteElements, updateNode } = useReactFlow();
     const nodes = useNodes();
-    const { selectedNodes } = useSoundDesignerStore();
+    const audioGraph = useAudioGraph();
 
+    const [detune, setDetune] = useState<number>(data.detune);
+    const [volume, setVolume] = useState<number>(data.volume);
+    const [portamento, setPortamento] = useState<number>(data.portamento);
+    const [envelope, setEnvelope] = useState<Omit<Tone.EnvelopeOptions, 'context'>>(data.envelope);
+
+    const { selectedNodes } = useSoundDesignerStore();
     const isSelected = selectedNodes.some((node) => node.id === id);
 
     const play = () => {
-        setIsPlaying(true);
         audioGraph.current?.playNode(id);
     };
 
@@ -28,48 +31,52 @@ export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
         deleteElements({ nodes: nodes.filter((node) => node.id === id) });
     };
 
-    useEffect(() => {
-        if (audioGraph.current?.getToneNode(id) !== undefined) {
-            audioGraph.current?.updateParams(id, { onsilence: () => setIsPlaying(false) });
-        }
-    }, [audioGraph, id]);
-
     return (
         <ContextMenu.Root>
             <ContextMenu.Trigger className="cursor-default">
                 <div
                     className={cn(
-                        'bg-zinc-900 rounded-md w-52 text-neutral-100 hover:shadow-lg hover:shadow-primary/5 flex flex-col',
-                        isSelected ? ' border border-primary' : ''
+                        'bg-zinc-900 rounded-md min-w-64 text-neutral-100 hover:shadow-lg hover:shadow-primary/5 flex flex-col ',
+                        isSelected ? 'border border-primary' : 'border border-white/15'
                     )}
                 >
                     <div className="bg-zinc-800 rounded-t-md p-2 flex justify-between drag-handle cursor-grab">
                         <div className="flex gap-1.5 items-center">
-                            <div className="text-xs font-semibold">Synth {id}</div>
-                            {
-                                <Volume2
-                                    className={
-                                        isPlaying ? 'text-primary opacity-100 animate-pulse' : 'text-white opacity-30'
-                                    }
-                                    size={12}
-                                />
-                            }
+                            <div className="text-xs font-semibold">{data.title}</div>
                         </div>
                         <GripVertical className=" text-neutral-500" size={14} />
                     </div>
 
-                    <div className="p-2">
-                        <input
-                            type="number"
-                            onChange={(e) => {
-                                const d = parseInt(e.target.value);
+                    <div className="p-4 flex gap-4 flex-wrap">
+                        <Knob
+                            min={-45}
+                            max={15}
+                            onChange={(volume) => {
+                                setVolume(volume);
+                                updateNode(id, { data: { ...data, volume: volume } });
+                            }}
+                            value={volume}
+                            label="Volume"
+                        />
+                        <Knob
+                            min={0}
+                            max={2000}
+                            onChange={(d) => {
                                 setDetune(d);
-
-                                audioGraph.current?.updateParams<Partial<Tone.SynthOptions>>(id, { detune: d });
+                                updateNode(id, { data: { ...data, detune: d } });
                             }}
                             value={detune}
-                            className="w-24 bg-green-900 rounded-md"
+                            label="Detune"
+                        />
+                        <Knob
                             min={0}
+                            max={2000}
+                            onChange={(portamento) => {
+                                setPortamento(portamento);
+                                updateNode(id, { data: { ...data, portamento: portamento } });
+                            }}
+                            value={portamento}
+                            label="Portamento"
                         />
                     </div>
 

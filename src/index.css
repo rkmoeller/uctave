@@ -24,8 +24,8 @@
 }
 
 ::view-transition-group(active-tab) {
-    animation-duration: 150ms;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-duration: 275ms;
+    animation-timing-function: cubic-bezier(0.65, -0.08, 0, 1.44);
 }
 
 ::view-transition-old(active-tab),

@@ -12,12 +12,17 @@ import Button from '../../../components/Button';
 import { Save } from 'lucide-react';
 import db from '../../../db/db';
 import { useActiveProject } from '../../../hooks/useProject';
-import { v4 } from 'uuid';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
+import { createSoundPatch } from '../../../helpers/soundHelpers';
+import { useNavigate, useParams } from 'react-router';
+import { v4 } from 'uuid';
 
 export const SoundDesignerSavePopup = () => {
+    const { soundid } = useParams();
     const [name, setName] = useState<string | undefined>();
     const project = useActiveProject();
+
+    const navigate = useNavigate();
 
     const graph = useAudioGraph();
 
@@ -29,10 +34,11 @@ export const SoundDesignerSavePopup = () => {
 
     const saveSound = () => {
         if (name && name?.length > 0 && project && graph.current) {
-            graph.current.toneNodes.forEach((entry) => {
-                console.log(entry.get());
-            });
-            db.sounds.add({ id: v4(), title: name, audioGraph: graph.current, projectId: project.id });
+            const newId = v4();
+            db.sounds.upsert(soundid ?? newId, createSoundPatch(graph.current, project.id, name));
+            if (!soundid) {
+                navigate(newId);
+            }
         }
     };
 
@@ -41,7 +47,7 @@ export const SoundDesignerSavePopup = () => {
             <PopoverTrigger>
                 <Button className="rounded-full text-sm self-center" size="extrasmall" onClick={saveSound}>
                     <Save size={16} />
-                    {name?.length && name.length > 0 ? 'Confirm' : 'Save'}
+                    {name?.length && name.length > 0 ? 'Confirm' : soundid ? 'Update' : 'Save'}
                 </Button>
             </PopoverTrigger>
             <PopoverPortal>

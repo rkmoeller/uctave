@@ -1,14 +1,14 @@
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Handle, Position, useReactFlow, type NodeProps } from '@xyflow/react';
 import type { DistortionNodeType } from '../../../model/types/NodeTypes';
 
 import { ContextMenuItem, ContextMenuPopup } from '../../../components/ContextMenu';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
-import * as Tone from 'tone';
 import { ContextMenu } from '@base-ui/react/context-menu';
 
 export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
+    const { updateNode } = useReactFlow();
     const [amount, setAmount] = useState<number>(data.distortion);
 
     const audioGraph = useAudioGraph();
@@ -30,10 +30,7 @@ export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
                             onChange={(e) => {
                                 const d = parseInt(e.target.value);
                                 setAmount(d);
-
-                                audioGraph.current?.updateParams<Partial<Tone.DistortionOptions>>(id, {
-                                    distortion: d,
-                                });
+                                updateNode(id, { data: { ...data, distortion: d } });
                             }}
                             value={amount}
                             className="w-24 bg-green-900 rounded-md"
