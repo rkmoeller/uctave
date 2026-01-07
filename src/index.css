@@ -33,3 +33,11 @@
     opacity: 1;
     height: 100%;
 }
+
+.react-flow__panel a {
+    color: rgb(85, 85, 85) !important;
+}
+
+.react-flow__attribution {
+    background: transparent !important;
+}

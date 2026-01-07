@@ -18,7 +18,7 @@ export const Knob = ({ value, min, max, sensitivity = 1, label, hideValue = true
     const MIN_DEGREES = 0;
     const MAX_DEGREES = 360;
 
-    const internalSensitivity = (max - min) * 0.005;
+    const internalSensitivity = (max - min) * (sensitivity * 0.005);
 
     const calcValuePercent = () => {
         const valueDiff = value - min;

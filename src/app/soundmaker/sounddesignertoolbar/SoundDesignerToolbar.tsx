@@ -1,6 +1,5 @@
-import { AudioWaveform, ChevronDown, KeyboardMusic, SlidersVertical } from 'lucide-react';
-import { SoundDesignerToolbarMenu } from './SoundDesignerToolbarMenu';
-import { SoundDesignerSavePopup } from './SoundDesignerSavePopup';
+import { AudioWaveform, ChevronDown, KeyboardMusic, Plus, SlidersVertical } from 'lucide-react';
+import { SoundDesignerSave } from './SoundDesignerSave';
 import { useLiveQuery } from 'dexie-react-hooks';
 import db from '../../../db/db';
 import { useNavigate, useParams } from 'react-router';
@@ -9,6 +8,7 @@ import { useState } from 'react';
 import { cn } from '../../../helpers/cn';
 import { SoundSelection } from './SoundSelection';
 import { toast } from '../../../helpers/toasts/toast';
+import { SynthSelection } from './SynthSelection';
 
 export const SoundDesignerToolbar = () => {
     const { soundid, projectid } = useParams();
@@ -22,29 +22,93 @@ export const SoundDesignerToolbar = () => {
 
     const navigate = useNavigate();
 
-    const [openPanel, setOpenPanel] = useState<boolean>(false);
+    const [openPanel, setOpenPanel] = useState<string | undefined>();
+
+    const goToNewSound = () => {
+        navigate(`/app/${projectid}/sounddesigner`);
+        setOpenPanel(false);
+    };
+
+    const getPanel = () => {
+        switch (openPanel) {
+            case 'soundSelection': {
+                return (
+                    <SoundSelection
+                        onSelect={(sound) => {
+                            toast({
+                                title: 'New Sound Loaded',
+                                description: sound.title,
+                                type: 'success',
+                            });
+                            navigate(`/app/${projectid}/sounddesigner/${sound.id}`);
+                            togglePanel(undefined);
+                        }}
+                        onCreate={goToNewSound}
+                    />
+                );
+            }
+            case 'synthSelection': {
+                return <SynthSelection onSelect={() => {}} />;
+            }
+            default: {
+                return null;
+            }
+        }
+    };
+
+    const togglePanel = async (newPanel?: string) => {
+        if (!newPanel) {
+            setOpenPanel(undefined);
+            return;
+        }
+
+        if (openPanel) {
+            setOpenPanel(undefined);
+            await new Promise((resolve) => {
+                setTimeout(resolve, 125);
+            });
+        }
+
+        setOpenPanel(newPanel);
+    };
 
     return (
         <div className="bg-zinc-900 h-14 p-2 border-t border-zinc-800 flex items-center">
-            <div className=" w-full pl-2">
+            <div className=" w-full pl-2 flex gap-3">
                 <Button
                     size="extrasmall"
                     className="rounded-full"
-                    intent={sound ? 'tertiary' : 'secondary'}
-                    onClick={() => setOpenPanel((prev) => !prev)}
+                    intent={'secondary'}
+                    onClick={() => togglePanel('soundSelection')}
                 >
-                    {sound ? sound.title : 'Select sound'}
+                    {sound ? sound.title : 'Unnamed sound'}
                 </Button>
+                <button
+                    className="rounded-full bg-zinc-700 aspect-square w-6 flex justify-center items-center hover:bg-zinc-600 cursor-pointer"
+                    onClick={goToNewSound}
+                >
+                    <Plus size={14} />
+                </button>
             </div>
             <div className="flex justify-center items-center gap-2 m-auto h-full w-full">
-                <SoundDesignerToolbarMenu>
+                {/* <SoundDesignerToolbarMenu>
                     <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
                         <KeyboardMusic
                             className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
                             size={18}
                         />
                     </button>
-                </SoundDesignerToolbarMenu>
+                </SoundDesignerToolbarMenu> */}
+
+                <button
+                    className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all"
+                    onClick={() => togglePanel('synthSelection')}
+                >
+                    <KeyboardMusic
+                        className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
+                        size={18}
+                    />
+                </button>
 
                 <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
                     <SlidersVertical
@@ -62,29 +126,19 @@ export const SoundDesignerToolbar = () => {
             </div>
 
             <div className="w-full flex justify-end">
-                <SoundDesignerSavePopup />
+                <SoundDesignerSave sound={sound} />
             </div>
 
             <div
                 className={cn(
-                    'absolute bg-zinc-900/50 left-0 right-0 bottom-13 border-y border-zinc-800 transition-all overflow-hidden backdrop-blur-xl',
+                    'absolute bg-zinc-900/50 left-0 right-0 bottom-13 border-y border-zinc-800 transition-all overflow-hidden backdrop-blur-md',
                     openPanel ? 'p-4 h-52 opacity-100' : 'p-0 h-0 opacity-0 pointer-events-none'
                 )}
             >
-                <SoundSelection
-                    onSelect={(sound) => {
-                        toast({
-                            title: 'New Sound Loaded',
-                            description: sound.title,
-                            type: 'success',
-                        });
-                        navigate(`/app/${projectid}/sounddesigner/${sound.id}`);
-                        setOpenPanel(false);
-                    }}
-                />
+                {getPanel()}
                 <button
                     className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-zinc-800 cursor-pointer"
-                    onClick={() => setOpenPanel(false)}
+                    onClick={() => togglePanel(undefined)}
                 >
                     <ChevronDown size={16} />
                 </button>

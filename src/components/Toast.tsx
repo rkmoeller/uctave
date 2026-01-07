@@ -1,4 +1,5 @@
 import { CircleCheck, CircleX } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export interface ToastProps {
@@ -28,7 +29,7 @@ export const Toast = (props: ToastProps) => {
     };
 
     return (
-        <div className="flex rounded-xl bg-zinc-900 shadow-lg border border-zinc-800 gap-5 ring-1 ring-black/5 w-full md:max-w-[364px] items-center px-4 py-3">
+        <div className="flex rounded-xl bg-zinc-900 shadow-lg border border-zinc-800 gap-5 ring-1 ring-black/5 md:max-w-[364px] items-center px-4 py-3 w-auto">
             <div className="flex gap-3 items-center">
                 {getIcon()}
                 <div className="flex flex-1 items-center">

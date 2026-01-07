@@ -14,11 +14,17 @@ import db from '../../../db/db';
 import { useActiveProject } from '../../../hooks/useProject';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import { createSoundPatch } from '../../../helpers/soundHelpers';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { v4 } from 'uuid';
+import { toast } from '../../../helpers/toasts/toast';
+import { useKeydown } from '../../../hooks/useKeydown';
+import type { SoundPatch } from '../../../model/types/SoundPatch';
 
-export const SoundDesignerSavePopup = () => {
-    const { soundid } = useParams();
+interface SoundDesignerSaveProps {
+    sound?: SoundPatch;
+}
+
+export const SoundDesignerSave = ({ sound }: SoundDesignerSaveProps) => {
     const [name, setName] = useState<string | undefined>();
     const project = useActiveProject();
 
@@ -32,22 +38,47 @@ export const SoundDesignerSavePopup = () => {
         }
     };
 
-    const saveSound = () => {
-        if (name && name?.length > 0 && project && graph.current) {
+    const saveSound = async () => {
+        if (project && graph.current && (sound || name)) {
             const newId = v4();
-            db.sounds.upsert(soundid ?? newId, createSoundPatch(graph.current, project.id, name));
-            if (!soundid) {
-                navigate(newId);
+
+            try {
+                await db.sounds.upsert(
+                    sound?.id ?? newId,
+                    createSoundPatch(graph.current, project.id, sound?.title ?? name!)
+                );
+                if (!sound) {
+                    navigate(newId);
+                }
+                toast({
+                    title: 'Saved!',
+                    type: 'success',
+                });
+            } catch (e) {
+                console.error(e);
+                toast({
+                    title: 'Failed to save.',
+                    type: 'error',
+                });
             }
         }
     };
+
+    useKeydown(
+        's',
+        true,
+        () => {
+            saveSound();
+        },
+        [sound, project, graph]
+    );
 
     return (
         <PopoverRoot onOpenChange={handleChange}>
             <PopoverTrigger>
                 <Button className="rounded-full text-sm self-center" size="extrasmall" onClick={saveSound}>
                     <Save size={16} />
-                    {name?.length && name.length > 0 ? 'Confirm' : soundid ? 'Update' : 'Save'}
+                    {name?.length && name.length > 0 ? 'Confirm' : sound ? 'Update' : 'Save'}
                 </Button>
             </PopoverTrigger>
             <PopoverPortal>

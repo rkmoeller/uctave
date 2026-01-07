@@ -3,11 +3,11 @@ import type { SoundPatch } from '../model/types/SoundPatch';
 import { v4 } from 'uuid';
 import type { Edge, Node } from '@xyflow/react';
 
-export const createSoundPatch = (audioGraph: AudioGraph, projectId: string, title: string): SoundPatch => {
+export const createSoundPatch = (audioGraph: AudioGraph, projectId: string, title: string, id?: string): SoundPatch => {
     const { nodes, edges } = audioGraph.getPatch();
 
     const patch = {
-        id: v4(),
+        id: id ?? v4(),
         projectId: projectId,
         title: title,
         graph: {

@@ -38,16 +38,12 @@ const SoundDesigner = () => {
 
     const { defaultNodes, defaultEdges } = getDefaultSoundDesignerData();
 
-    const [nodes, setNodes] = useState<Node[]>(createdNodes.length > 0 ? createdNodes : defaultNodes);
-    const [edges, setEdges] = useState<Edge[]>(createdEdges.length > 0 ? createdEdges : defaultEdges);
+    const [nodes, setNodes] = useState<Node[]>();
+    const [edges, setEdges] = useState<Edge[]>();
 
     useEffect(() => {
-        if (createdNodes.length) {
-            setNodes(createdNodes);
-        }
-        if (createdEdges.length) {
-            setEdges(createdEdges);
-        }
+        setNodes(createdNodes.length > 0 ? createdNodes : defaultNodes);
+        setEdges(createdEdges.length > 0 ? createdEdges : defaultEdges);
     }, [createdNodes, createdEdges]);
 
     const { deleteElements } = useReactFlow();
@@ -55,7 +51,7 @@ const SoundDesigner = () => {
 
     useAudioGraph();
 
-    useKeydown('Delete', () => deleteElements({ nodes: selectedNodes }), [selectedNodes]);
+    useKeydown('Delete', false, () => deleteElements({ nodes: selectedNodes }), [selectedNodes]);
 
     useOnViewportChange({
         onChange: (viewport: Viewport) => {

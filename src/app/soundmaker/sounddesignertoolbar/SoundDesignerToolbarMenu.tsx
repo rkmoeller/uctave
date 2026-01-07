@@ -17,7 +17,11 @@ import {
 export const SoundDesignerToolbarMenu = (props: PropsWithChildren) => {
     return (
         <MenuRoot>
-            <MenuTrigger>{props.children}</MenuTrigger>
+            <MenuTrigger
+                render={(p) => {
+                    return <>{props.children}</>;
+                }}
+            />
             <MenuPortal>
                 <MenuBackdrop />
                 <MenuPositioner>
