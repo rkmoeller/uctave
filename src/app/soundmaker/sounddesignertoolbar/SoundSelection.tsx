@@ -43,9 +43,6 @@ export const SoundSelection = ({ onSelect, onCreate }: SoundSelectionProps) => {
             ) : (
                 <div className="flex justify-center items-center w-full h-full text-zinc-500 flex-col gap-3">
                     <div>No sounds found.</div>
-                    <Button className="rounded-full" size="small" intent="tertiary" onClick={onCreate}>
-                        Create sound
-                    </Button>
                 </div>
             )}
         </div>

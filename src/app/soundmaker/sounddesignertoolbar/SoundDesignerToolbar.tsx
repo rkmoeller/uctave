@@ -26,7 +26,7 @@ export const SoundDesignerToolbar = () => {
 
     const goToNewSound = () => {
         navigate(`/app/${projectid}/sounddesigner`);
-        setOpenPanel(false);
+        setOpenPanel(undefined);
     };
 
     const getPanel = () => {
@@ -36,7 +36,7 @@ export const SoundDesignerToolbar = () => {
                     <SoundSelection
                         onSelect={(sound) => {
                             toast({
-                                title: 'New Sound Loaded',
+                                title: 'New sound loaded',
                                 description: sound.title,
                                 type: 'success',
                             });
@@ -67,6 +67,10 @@ export const SoundDesignerToolbar = () => {
             await new Promise((resolve) => {
                 setTimeout(resolve, 125);
             });
+
+            if (newPanel === openPanel) {
+                return;
+            }
         }
 
         setOpenPanel(newPanel);
@@ -91,15 +95,6 @@ export const SoundDesignerToolbar = () => {
                 </button>
             </div>
             <div className="flex justify-center items-center gap-2 m-auto h-full w-full">
-                {/* <SoundDesignerToolbarMenu>
-                    <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
-                        <KeyboardMusic
-                            className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
-                            size={18}
-                        />
-                    </button>
-                </SoundDesignerToolbarMenu> */}
-
                 <button
                     className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all"
                     onClick={() => togglePanel('synthSelection')}

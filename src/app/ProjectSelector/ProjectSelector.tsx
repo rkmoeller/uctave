@@ -30,6 +30,7 @@ export const ProjectSelector = () => {
 
     const deleteProject = (project: Project) => {
         db.projects.delete(project.id);
+        db.sounds.where({ projectid: project.id }).delete();
     };
 
     const editProject = (editedProject: Project) => {
@@ -39,8 +40,8 @@ export const ProjectSelector = () => {
     return (
         <div className="p-6 w-full h-dvh flex items-center justify-center relative">
             <Link to="/" viewTransition>
-                <div className="absolute top-4 left-4 flex h-fit gap-3 items-center">
-                    <div className="rounded-lg bg-primary w-9 h-9 flex items-center justify-center logo">
+                <div className="absolute top-3 left-3 flex h-fit gap-3 items-center">
+                    <div className="rounded-lg bg-primary w-8 h-8 flex items-center justify-center logo">
                         <AudioLines className="text-zinc-900" size={22} />
                     </div>
                     <div className=" text-white font-bold title">Uctave</div>

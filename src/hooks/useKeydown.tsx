@@ -5,16 +5,14 @@ export const useKeydown = (key: string, ctrl: boolean = false, callback: () => v
 
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
-            e.preventDefault();
-
             if (e.key === 'Control' && ctrl) {
                 setCtrlPressed(true);
                 return;
             }
 
             if (e.key === key) {
-                console.log(ctrlPressed);
                 if (!ctrl || (ctrl && ctrlPressed)) {
+                    e.preventDefault();
                     callback();
                 }
             }

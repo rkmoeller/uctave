@@ -6,11 +6,13 @@ import { ProjectSelector } from '../app/projectselector/ProjectSelector';
 import { Arrangement } from '../app/arrangement/Arrangement';
 import { Library } from '../app/library/Library';
 import { Overview } from '../app/overview/Overview';
+import { RootError } from '../app/errorboundaries/RootError';
 
 export const routes = createBrowserRouter([
     {
         path: '/',
         Component: Frontpage,
+        errorElement: <RootError />,
     },
     {
         path: '/app',

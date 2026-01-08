@@ -1,12 +1,7 @@
 import { Input as BaseInput } from '@base-ui/react/input';
 import { cn } from '../helpers/cn';
-import type { RefObject } from 'react';
 
-interface Props extends BaseInput.Props {
-    ref?: RefObject<HTMLInputElement | null>;
-}
-
-export const Input = (props: Props) => {
+export const Input = (props: BaseInput.Props) => {
     return (
         <BaseInput
             {...props}
