@@ -5,7 +5,6 @@ import { useActiveProject } from '../../../hooks/useProject';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import { createSoundPatch } from '../../../helpers/soundHelpers';
 import { useNavigate } from 'react-router';
-import { v4 } from 'uuid';
 import { toast } from '../../../helpers/toasts/toast';
 import { useKeydown } from '../../../hooks/useKeydown';
 import type { SoundPatch } from '../../../model/types/SoundPatch';
@@ -23,6 +22,7 @@ import {
 import Button from '../../../components/Button';
 import { Save } from 'lucide-react';
 import { Input } from '../../../components/Input';
+import { nanoid } from 'nanoid';
 
 interface SoundDesignerSaveProps {
     sound?: SoundPatch;
@@ -39,7 +39,7 @@ export const SoundDesignerSave = ({ sound }: SoundDesignerSaveProps) => {
 
     const saveSound = async () => {
         if (project && graph.current && (sound || name)) {
-            const newId = v4();
+            const newId = nanoid();
             const newName = sound?.title ?? name;
 
             try {

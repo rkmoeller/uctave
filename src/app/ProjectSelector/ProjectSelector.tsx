@@ -4,10 +4,10 @@ import db from '../../db/db';
 import Button from '../../components/Button';
 import type { Project } from '../../model/types/Project';
 import { useState } from 'react';
-import { v4 } from 'uuid';
 import { Input } from '../../components/Input';
 import { Link } from 'react-router';
 import { ProjectListItem } from './ProjectListItem';
+import { nanoid } from 'nanoid';
 
 export const ProjectSelector = () => {
     const projects = useLiveQuery(async () =>
@@ -18,7 +18,7 @@ export const ProjectSelector = () => {
     const createProject = async () => {
         if (tempProjectTitle && tempProjectTitle.length > 0) {
             const newProject: Project = {
-                id: v4(),
+                id: nanoid(),
                 title: tempProjectTitle,
                 created: new Date(),
                 updated: new Date(),

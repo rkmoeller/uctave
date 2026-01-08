@@ -1,10 +1,11 @@
-import { Handle, Position, useReactFlow, type Node } from '@xyflow/react';
+import { Handle, Position, useReactFlow, type NodeProps } from '@xyflow/react';
 import { Headphones, LockOpen, Lock, GripVertical } from 'lucide-react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import { cn } from '../../../helpers/cn';
 import * as Tone from 'tone';
+import type { DestinationNodeType } from '../../../model/types/NodeTypes';
 
-export const DestinationNode = ({ id, draggable }: Node) => {
+export const DestinationNode = ({ id, draggable }: NodeProps<DestinationNodeType>) => {
     const { updateNode } = useReactFlow();
     const audioGraph = useAudioGraph();
 

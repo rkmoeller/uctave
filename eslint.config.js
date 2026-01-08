@@ -31,6 +31,7 @@ export default defineConfig([
             'react/self-closing-comp': 'error',
             'react/jsx-uses-vars': 'error',
             '@typescript-eslint/no-explicit-any': 'warn',
+            '@typescript-eslint/no-empty-object-type': 'off',
         },
     },
     eslintConfigPrettier,

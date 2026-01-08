@@ -21,6 +21,7 @@ export const routes = createBrowserRouter([
     {
         path: '/app/:projectid',
         Component: Root,
+        errorElement: <RootError />,
         children: [
             {
                 path: 'overview',

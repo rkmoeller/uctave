@@ -14,4 +14,14 @@ export type SynthNodeParams = {
 export type SynthNodeType = Node<SynthNodeParams, 'string'>;
 
 // Distortion Node
-export type DistortionNodeType = Node<{ distortion: number }, 'string'>;
+export type DistortionNodeParams = {
+    title: string;
+    distortion: number;
+};
+
+export type DistortionNodeType = Node<DistortionNodeParams, 'string'>;
+
+// Destination Node
+export type DestinationNodeParams = {};
+
+export type DestinationNodeType = Node<DestinationNodeParams, 'string'>;

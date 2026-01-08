@@ -1,6 +1,5 @@
 import { Dialog } from '@base-ui/react/dialog';
 import type { JSX } from 'react';
-import { cn } from '../helpers/cn';
 
 export function DialogRoot(props: Dialog.Root.Props): JSX.Element {
     return <Dialog.Root {...props} />;

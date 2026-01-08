@@ -4,7 +4,6 @@ import db from '../../../db/db';
 import type { SoundPatch } from '../../../model/types/SoundPatch';
 import { useActiveProject } from '../../../hooks/useProject';
 import { AudioLines, Plus } from 'lucide-react';
-import Button from '../../../components/Button';
 
 interface SoundSelectionProps {
     onSelect: (sound: SoundPatch) => void;

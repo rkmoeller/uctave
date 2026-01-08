@@ -1,13 +1,13 @@
 import type { AudioGraph } from '../app/soundmaker/audioGraph';
 import type { SoundPatch } from '../model/types/SoundPatch';
-import { v4 } from 'uuid';
 import type { Edge, Node } from '@xyflow/react';
+import { nanoid } from 'nanoid';
 
 export const createSoundPatch = (audioGraph: AudioGraph, projectId: string, title: string, id?: string): SoundPatch => {
     const { nodes, edges } = audioGraph.getPatch();
 
     const patch = {
-        id: id ?? v4(),
+        id: id ?? nanoid(),
         projectId: projectId,
         title: title,
         graph: {

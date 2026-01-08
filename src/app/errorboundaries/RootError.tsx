@@ -3,7 +3,6 @@ import { Error404 } from './404';
 
 export const RootError = () => {
     const error: any = useRouteError();
-    console.log(error);
 
     switch (error.status) {
         case 404: {

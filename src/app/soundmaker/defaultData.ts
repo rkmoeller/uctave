@@ -1,11 +1,11 @@
 import type { Edge, Node } from '@xyflow/react';
-import { v4 } from 'uuid';
+import { nanoid } from 'nanoid';
 
 export const getDefaultSoundDesignerData = () => {
-    const synthOneId = v4();
-    const synthTwoId = v4();
-    const distortionId = v4();
-    const outputId = v4();
+    const synthOneId = nanoid();
+    const synthTwoId = nanoid();
+    const distortionId = nanoid();
+    const outputId = nanoid();
 
     const defaultNodes: Node[] = [
         {
