@@ -4,7 +4,6 @@ import { ContextMenuItem, ContextMenuPopup } from '../../../components/ContextMe
 import { GripVertical, Play, Trash } from 'lucide-react';
 import { useState } from 'react';
 import { useAudioGraph } from '../../../hooks/useAudioGraph';
-import * as Tone from 'tone';
 import { ContextMenu } from '@base-ui/react/context-menu';
 import useSoundDesignerStore from '../../../store/SoundDesignerStore';
 import { cn } from '../../../helpers/cn';
@@ -18,7 +17,7 @@ export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
     const [detune, setDetune] = useState<number>(data.detune);
     const [volume, setVolume] = useState<number>(data.volume);
     const [portamento, setPortamento] = useState<number>(data.portamento);
-    const [envelope, setEnvelope] = useState<Omit<Tone.EnvelopeOptions, 'context'>>(data.envelope);
+    // const [envelope, setEnvelope] = useState<Omit<Tone.EnvelopeOptions, 'context'>>(data.envelope);
 
     const { selectedNodes } = useSoundDesignerStore();
     const isSelected = selectedNodes.some((node) => node.id === id);
@@ -97,7 +96,10 @@ export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
                     <ContextMenuPopup className="min-w-[200px]">
                         <ContextMenuItem>Rename</ContextMenuItem>
                         <ContextMenuItem>Change target</ContextMenuItem>
-                        <ContextMenuItem className="group flex justify-between" onClick={deleteNode}>
+                        <ContextMenuItem
+                            className="group flex justify-between"
+                            onClick={deleteNode}
+                        >
                             Delete
                             <Trash size={16} className="group-hover:text-rose-400" />
                         </ContextMenuItem>

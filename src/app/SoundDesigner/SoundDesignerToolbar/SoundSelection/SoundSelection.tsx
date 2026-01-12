@@ -1,12 +1,11 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-
 import db from '../../../../db/db';
 import type { SoundPatch } from '../../../../model/types/SoundPatch';
 import { useActiveProject } from '../../../../hooks/useProject';
 import { Plus } from 'lucide-react';
-import { SoundSelectionItem } from './SoundSelectionItem';
 import { SearchInput } from '../../../../components/SearchInput';
 import { useState } from 'react';
+import { SoundSelectionItem } from './SoundSelectionItem';
 
 interface SoundSelectionProps {
     onSelect: (sound: SoundPatch) => void;

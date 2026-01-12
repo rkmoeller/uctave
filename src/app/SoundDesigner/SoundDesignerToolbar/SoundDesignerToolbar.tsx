@@ -1,14 +1,16 @@
 import { AudioWaveform, ChevronDown, KeyboardMusic, Plus, SlidersVertical } from 'lucide-react';
-import { SoundDesignerSave } from './SoundDesignerSave';
+
 import { useLiveQuery } from 'dexie-react-hooks';
 import db from '../../../db/db';
 import { useNavigate, useParams } from 'react-router';
 import Button from '../../../components/Button';
 import { useState } from 'react';
 import { cn } from '../../../helpers/cn';
-import { SoundSelection } from './SoundSelection/SoundSelection';
+
 import { toast } from '../../../helpers/toasts/toast';
+import { SoundSelection } from './SoundSelection/SoundSelection';
 import { SynthSelection } from './SynthSelection';
+import { SoundDesignerSave } from './SoundDesignerSave';
 
 export const SoundDesignerToolbar = () => {
     const { soundid, projectid } = useParams();
@@ -48,7 +50,7 @@ export const SoundDesignerToolbar = () => {
                 );
             }
             case 'synthSelection': {
-                return <SynthSelection onSelect={() => {}} />;
+                return <SynthSelection />;
             }
             default: {
                 return null;
