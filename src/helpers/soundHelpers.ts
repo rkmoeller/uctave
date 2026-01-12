@@ -1,7 +1,7 @@
 import type { SoundPatch } from '../model/types/SoundPatch';
 import type { Edge, Node } from '@xyflow/react';
 import { nanoid } from 'nanoid';
-import type { AudioGraph } from '../app/SoundDesigner/audioGraph';
+import type { AudioGraph } from '../app/soundmaker/audioGraph';
 
 export const createSoundPatch = (
     audioGraph: AudioGraph,

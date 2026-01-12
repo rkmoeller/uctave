@@ -7,7 +7,7 @@ import { useAudioGraph } from './useAudioGraph';
 import useSoundDesignerStore from '../store/SoundDesignerStore';
 import { createNodesAndEdgesFromPatch } from '../helpers/soundHelpers';
 import type { PendingStatus } from '../model/types/PendingStatus';
-import { getDefaultSoundDesignerData } from '../app/SoundDesigner/defaultData';
+import { getDefaultSoundDesignerData } from '../app/soundmaker/defaultData';
 
 export const useSoundDesigner = () => {
     const { soundid } = useParams();

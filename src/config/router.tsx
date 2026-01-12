@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router';
 import Frontpage from '../Frontpage';
 import Root from '../app/Root';
-import { ProjectSelector } from '../app/ProjectSelector/ProjectSelector';
-import { RootError } from '../app/ErrorBoundaries/RootError';
+import { ProjectSelector } from '../app/projectselector/ProjectSelector';
+import { RootError } from '../app/errorboundaries/RootError';
 import { Overview } from '../app/Overview/Overview';
-import { Arrangement } from '../app/Arrangement/Arrangement';
-import SoundDesigner from '../app/SoundDesigner/SoundDesigner';
+import { Arrangement } from '../app/arrangement/Arrangement';
+import SoundDesigner from '../app/soundmaker/SoundDesigner';
 import { Library } from 'lucide-react';
 
 export const routes = createBrowserRouter([
