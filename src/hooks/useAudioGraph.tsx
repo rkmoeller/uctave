@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { audioGraph, AudioGraph } from '../app/soundmaker/audioGraph';
+
 import { useEdges, useNodes } from '@xyflow/react';
+import { audioGraph, type AudioGraph } from '../app/SoundDesigner/audioGraph';
 
 export const useAudioGraph = () => {
     const nodes = useNodes();

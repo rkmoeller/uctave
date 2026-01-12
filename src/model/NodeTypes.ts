@@ -1,6 +1,6 @@
-import { DestinationNode } from '../app/soundmaker/nodes/DestinationNode';
-import { DistortionNode } from '../app/soundmaker/nodes/DistortionNode';
-import { SynthNode } from '../app/soundmaker/nodes/SynthNode';
+import { DestinationNode } from '../app/SoundDesigner/nodes/DestinationNode';
+import { DistortionNode } from '../app/SoundDesigner/nodes/DistortionNode';
+import { SynthNode } from '../app/SoundDesigner/nodes/SynthNode';
 
 export const nodeTypes = {
     synthNode: SynthNode,

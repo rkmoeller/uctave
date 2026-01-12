@@ -5,9 +5,9 @@ import db from '../db/db';
 import { useOnViewportChange, type Viewport } from '@xyflow/react';
 import { useAudioGraph } from './useAudioGraph';
 import useSoundDesignerStore from '../store/SoundDesignerStore';
-import { getDefaultSoundDesignerData } from '../app/soundmaker/defaultData';
 import { createNodesAndEdgesFromPatch } from '../helpers/soundHelpers';
 import type { PendingStatus } from '../model/types/PendingStatus';
+import { getDefaultSoundDesignerData } from '../app/SoundDesigner/defaultData';
 
 export const useSoundDesigner = () => {
     const { soundid } = useParams();

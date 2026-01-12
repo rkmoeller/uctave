@@ -1,12 +1,12 @@
 import { createBrowserRouter } from 'react-router';
 import Frontpage from '../Frontpage';
 import Root from '../app/Root';
-import SoundDesigner from '../app/soundmaker/SoundDesigner';
-import { ProjectSelector } from '../app/projectselector/ProjectSelector';
-import { Arrangement } from '../app/arrangement/Arrangement';
-import { Library } from '../app/library/Library';
-import { Overview } from '../app/overview/Overview';
-import { RootError } from '../app/errorboundaries/RootError';
+import { ProjectSelector } from '../app/ProjectSelector/ProjectSelector';
+import { RootError } from '../app/ErrorBoundaries/RootError';
+import { Overview } from '../app/Overview/Overview';
+import { Arrangement } from '../app/Arrangement/Arrangement';
+import SoundDesigner from '../app/SoundDesigner/SoundDesigner';
+import { Library } from 'lucide-react';
 
 export const routes = createBrowserRouter([
     {
