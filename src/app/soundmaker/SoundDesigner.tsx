@@ -14,11 +14,10 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import { nodeTypes } from '../../model/NodeTypes';
-import { SoundDesignerToolbar } from './sounddesignertoolbar/SoundDesignerToolbar';
 import { useKeydown } from '../../hooks/useKeydown';
 import { ZoomIn } from 'lucide-react';
-
 import { useSoundDesigner } from '../../hooks/useSoundDesigner';
+import { SoundDesignerToolbar } from './SoundDesignerToolbar/SoundDesignerToolbar';
 
 const SoundDesigner = () => {
     const { deleteElements, getNode } = useReactFlow();
