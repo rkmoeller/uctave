@@ -1,5 +1,4 @@
-import { CircleCheck, CircleX } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { CircleCheck, CircleX, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface ToastProps {
@@ -11,7 +10,7 @@ export interface ToastProps {
         onClick?: () => void;
         dismiss?: boolean;
     };
-    type?: 'default' | 'success' | 'error';
+    type?: 'default' | 'success' | 'error' | 'delete';
 }
 
 export const Toast = (props: ToastProps) => {
@@ -23,6 +22,8 @@ export const Toast = (props: ToastProps) => {
                 return <CircleCheck size={20} className="text-green-400" />;
             case 'error':
                 return <CircleX size={20} className="text-rose-400" />;
+            case 'delete':
+                return <Trash size={20} className="text-rose-400" />;
             default:
                 return null;
         }

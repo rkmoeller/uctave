@@ -82,11 +82,6 @@ export class AudioGraph {
         }
     }
 
-    public updateParams<T>(id: string, newParams: T) {
-        const toneNode = this.toneNodes.get(id);
-        toneNode.set(newParams);
-    }
-
     private createToneNode(node: NodePatch) {
         const type = node.type as NodeTypeNames;
         switch (type) {

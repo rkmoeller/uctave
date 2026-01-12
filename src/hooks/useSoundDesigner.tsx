@@ -23,6 +23,7 @@ export const useSoundDesigner = () => {
             const sound = await db.sounds.get({ id: soundid });
 
             if (!sound && soundid) {
+                console.log(soundid);
                 throw new Error();
             }
             setStatus('resolved');

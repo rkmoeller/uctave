@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router';
 import Button from '../../../components/Button';
 import { useState } from 'react';
 import { cn } from '../../../helpers/cn';
-import { SoundSelection } from './SoundSelection';
+import { SoundSelection } from './SoundSelection/SoundSelection';
 import { toast } from '../../../helpers/toasts/toast';
 import { SynthSelection } from './SynthSelection';
 
@@ -64,6 +64,8 @@ export const SoundDesignerToolbar = () => {
 
         if (openPanel) {
             setOpenPanel(undefined);
+
+            // Transition Animation Delay
             await new Promise((resolve) => {
                 setTimeout(resolve, 125);
             });
@@ -127,7 +129,7 @@ export const SoundDesignerToolbar = () => {
             <div
                 className={cn(
                     'absolute bg-zinc-900/50 left-0 right-0 bottom-13 border-y border-zinc-800 transition-all overflow-hidden backdrop-blur-md',
-                    openPanel ? 'p-4 h-52 opacity-100' : 'p-0 h-0 opacity-0 pointer-events-none'
+                    openPanel ? 'p-4 pb-0 h-64 opacity-100' : 'p-0 h-0 border-0 pointer-events-none'
                 )}
             >
                 {getPanel()}

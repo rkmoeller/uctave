@@ -10,10 +10,22 @@ interface KnobProps {
     sensitivity?: number;
     label?: string;
     hideValue?: boolean;
+    floor?: boolean;
 }
 
-export const Knob = ({ value, min, max, sensitivity = 1, label, hideValue = true, onChange }: KnobProps) => {
-    const [dragStart, setDragStart] = useState<{ x: number; y: number; intialValue: number } | undefined>();
+export const Knob = ({
+    value,
+    min,
+    max,
+    sensitivity = 1,
+    label,
+    hideValue = true,
+    floor = true,
+    onChange,
+}: KnobProps) => {
+    const [dragStart, setDragStart] = useState<
+        { x: number; y: number; intialValue: number } | undefined
+    >();
 
     const MIN_DEGREES = 0;
     const MAX_DEGREES = 360;
@@ -39,7 +51,9 @@ export const Knob = ({ value, min, max, sensitivity = 1, label, hideValue = true
         if (dragStart && mousePosition) {
             const sens = shift ? 10 : internalSensitivity;
             const diffY = (dragStart.y - mousePosition.y) * sens;
-            const newValue = Math.floor(clamp(dragStart.intialValue + diffY));
+            const newValue = floor
+                ? Math.floor(clamp(dragStart.intialValue + diffY))
+                : parseFloat(clamp(dragStart.intialValue + diffY).toFixed(3));
 
             onChange(newValue);
         }
@@ -67,7 +81,9 @@ export const Knob = ({ value, min, max, sensitivity = 1, label, hideValue = true
             )}
             <div
                 className="relative aspect-square w-10 cursor-ns-resize group"
-                onMouseDown={(e) => setDragStart({ x: e.clientX, y: e.clientY, intialValue: value })}
+                onMouseDown={(e) =>
+                    setDragStart({ x: e.clientX, y: e.clientY, intialValue: value })
+                }
             >
                 {/* Top */}
                 <div className="absolute bg-zinc-800 inset-[3px] z-10 rounded-full flex items-center justify-center">

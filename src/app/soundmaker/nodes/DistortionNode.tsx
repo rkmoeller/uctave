@@ -1,40 +1,37 @@
 import { Handle, Position, useReactFlow, type NodeProps } from '@xyflow/react';
 import type { DistortionNodeType } from '../../../model/types/NodeTypes';
-
 import { ContextMenuItem, ContextMenuPopup } from '../../../components/ContextMenu';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { useAudioGraph } from '../../../hooks/useAudioGraph';
 import { ContextMenu } from '@base-ui/react/context-menu';
+import { Knob } from '../../../components/Knob';
 
 export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
     const { updateNode } = useReactFlow();
     const [amount, setAmount] = useState<number>(data.distortion);
-
-    const audioGraph = useAudioGraph();
 
     return (
         <ContextMenu.Root>
             <ContextMenu.Trigger>
                 <div className="bg-zinc-900 rounded-md w-52 text-neutral-100 hover:shadow-lg hover:shadow-primary/5 flex flex-col">
                     <div className="bg-zinc-800 rounded-t-md p-2 flex justify-between drag-handle">
-                        <div className="text-xs ">Distortion {id}</div>
+                        <div className="text-xs ">Distortion </div>
                         <GripVertical className=" text-neutral-500" size={14} />
                     </div>
 
                     <div />
 
                     <div className="p-2">
-                        <input
-                            type="number"
-                            onChange={(e) => {
-                                const d = parseInt(e.target.value);
-                                setAmount(d);
-                                updateNode(id, { data: { ...data, distortion: d } });
+                        <Knob
+                            min={0}
+                            max={2}
+                            onChange={(amount) => {
+                                setAmount(amount);
+                                updateNode(id, { data: { ...data, distortion: amount } });
                             }}
                             value={amount}
-                            className="w-24 bg-green-900 rounded-md"
-                            min={0}
+                            label="Amount"
+                            floor={false}
                         />
                     </div>
 
