@@ -51,7 +51,11 @@ export const ProjectSelector = () => {
                 {((projects && projects.length > 0) || tempProjectTitle !== undefined) && (
                     <div className="flex justify-between items-center py-4">
                         <h1 className="text-zinc-100 font-bold text-2xl">Select project</h1>
-                        <Button className="h-fit" size="small" onClick={() => setTempProjectTitle('')}>
+                        <Button
+                            className="h-fit"
+                            size="small"
+                            onClick={() => setTempProjectTitle('')}
+                        >
                             New project
                         </Button>
                     </div>
@@ -59,9 +63,17 @@ export const ProjectSelector = () => {
                 <div className="flex flex-col rounded-xl p-4 gap-2 border border-zinc-800">
                     {(!projects || projects.length === 0) && tempProjectTitle === undefined ? (
                         <div className="bg-zinc-800/50 col-span-full min-h-64 rounded-lg flex flex-col items-center justify-center gap-1">
-                            <span className="text-zinc-200 font-semibold">You haven't created a project yet.</span>
-                            <span className="text-zinc-500">Get started by creating a new project</span>
-                            <Button className="mt-4" size="small" onClick={() => setTempProjectTitle('')}>
+                            <span className="text-zinc-200 font-semibold">
+                                You haven't created a project yet.
+                            </span>
+                            <span className="text-zinc-500">
+                                Get started by creating a new project
+                            </span>
+                            <Button
+                                className="mt-4"
+                                size="small"
+                                onClick={() => setTempProjectTitle('')}
+                            >
                                 Create project
                             </Button>
                         </div>
