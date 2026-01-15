@@ -29,10 +29,6 @@
 ::view-transition-group(active-tab) {
     animation-duration: 275ms;
     animation-timing-function: cubic-bezier(0.65, -0.08, 0, 1.44);
-}
-
-::view-transition-old(active-tab),
-::view-transition-new(active-tab) {
     opacity: 1;
     height: 100%;
 }
