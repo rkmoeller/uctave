@@ -75,17 +75,20 @@ const SoundDesigner = () => {
     };
 
     const onNodesChange = useCallback(
-        (changes: NodeChange<Node>[]) =>
-            setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot ?? [])),
+        (changes: NodeChange<Node>[]) => setNodes((prev) => applyNodeChanges(changes, prev ?? [])),
         []
     );
     const onEdgesChange = useCallback(
-        (changes: EdgeChange<Edge>[]) =>
-            setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot ?? [])),
+        (changes: EdgeChange<Edge>[]) => setEdges((prev) => applyEdgeChanges(changes, prev ?? [])),
         []
     );
     const onConnect = useCallback((params: any) => {
-        return setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot ?? []));
+        console.log(params);
+
+        return setEdges((prev) =>
+            // Ensure that the created ID has the proper format. Otherwise the audioGraph won't be able sync properly.
+            addEdge({ ...params, id: `${params.source}->${params.target}` }, prev ?? [])
+        );
     }, []);
 
     if (status === 'pending') {

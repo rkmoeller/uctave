@@ -11,6 +11,8 @@ export const createSoundPatch = (
 ): SoundPatch => {
     const { nodes, edges } = audioGraph.getPatch();
 
+    console.log(nodes);
+
     const patch = {
         id: id ?? nanoid(),
         projectId: projectId,

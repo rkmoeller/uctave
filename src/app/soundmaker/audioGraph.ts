@@ -26,8 +26,6 @@ export class AudioGraph {
 
         this.agNodes = newNodes;
         this.agEdges = newEdges;
-
-        console.log('finished sync');
     }
 
     private updateNodes(nodes: Map<string, NodePatch>) {
@@ -71,8 +69,8 @@ export class AudioGraph {
         // Disconnect nodes based on missing edges
         for (const [id] of this.agEdges) {
             if (!edges.has(id)) {
-                const sourceId = id.split('-')[0];
-                const targetId = id.split('-')[1];
+                const sourceId = id.split('->')[0];
+                const targetId = id.split('->')[1];
 
                 const source: Tone.ToneAudioNode = this.toneNodes.get(sourceId);
                 const target: Tone.ToneAudioNode = this.toneNodes.get(targetId);
