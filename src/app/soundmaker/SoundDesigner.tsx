@@ -19,7 +19,6 @@ import { ZoomIn } from 'lucide-react';
 import { useSoundDesigner } from '../../hooks/useSoundDesigner';
 import { SoundDesignerToolbar } from './SoundDesignerToolbar/SoundDesignerToolbar';
 import { cn } from '../../helpers/cn';
-import { nanoid } from 'nanoid';
 import { createDefaultNode } from '../../helpers/nodeHelpers/nodeHelpers';
 
 const SoundDesigner = () => {
@@ -83,8 +82,6 @@ const SoundDesigner = () => {
         []
     );
     const onConnect = useCallback((params: any) => {
-        console.log(params);
-
         return setEdges((prev) =>
             // Ensure that the created ID has the proper format. Otherwise the audioGraph won't be able sync properly.
             addEdge({ ...params, id: `${params.source}->${params.target}` }, prev ?? [])

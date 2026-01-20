@@ -1,7 +1,10 @@
 import * as Tone from 'tone';
 import type { NodeTypeNames } from '../../model/NodeTypes';
-import type { SynthNodeParams } from '../../model/types/NodeTypes';
-import { createSynthFromParams } from '../../helpers/toneFactories/synthFactories';
+import type { PluckSynthNodeParams, SynthNodeParams } from '../../model/types/NodeTypes';
+import {
+    createTonePluckSynthFromParams,
+    createToneSynthFromParams,
+} from '../../helpers/toneFactories/synthFactories';
 import type { EdgePatch, NodePatch } from '../../model/types/SoundPatch';
 
 export class AudioGraph {
@@ -87,7 +90,12 @@ export class AudioGraph {
         switch (type) {
             case 'synthNode': {
                 const params = node.data as SynthNodeParams;
-                return createSynthFromParams(params);
+                return createToneSynthFromParams(params);
+            }
+
+            case 'pluckSynthNode': {
+                const params = node.data as PluckSynthNodeParams;
+                return createTonePluckSynthFromParams(params);
             }
 
             case 'distortionNode':

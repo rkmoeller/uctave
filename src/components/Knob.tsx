@@ -12,6 +12,7 @@ interface KnobProps {
     hideValue?: boolean;
     floor?: boolean;
     unit?: string;
+    percentage?: boolean;
 }
 
 export const Knob = ({
@@ -24,6 +25,7 @@ export const Knob = ({
     floor = true,
     onChange,
     unit,
+    percentage,
 }: KnobProps) => {
     const [dragStart, setDragStart] = useState<
         { x: number; y: number; intialValue: number } | undefined
@@ -78,7 +80,7 @@ export const Knob = ({
             {!hideValue && <span className="text-white/30 text-xs">{value}</span>}
             {dragStart && (
                 <div className="absolute -top-7 text-xs rounded space-x-0.5 px-1.25 py-px font-semibold bg-zinc-800/30 border border-zinc-700 z-100 text-primary-hover">
-                    <span>{value}</span>
+                    <span>{percentage ? (value * 100).toFixed(0) : value}</span>
                     <span>{unit}</span>
                 </div>
             )}

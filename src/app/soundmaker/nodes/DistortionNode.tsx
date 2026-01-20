@@ -9,6 +9,7 @@ import { Knob } from '../../../components/Knob';
 export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
     const { updateNode } = useReactFlow();
     const [amount, setAmount] = useState<number>(data.distortion);
+    const [wet, setWet] = useState<number>(data.wet);
 
     return (
         <ContextMenu.Root>
@@ -21,10 +22,10 @@ export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
 
                     <div />
 
-                    <div className="p-2">
+                    <div className="p-2 flex gap-4">
                         <Knob
                             min={0}
-                            max={2}
+                            max={1}
                             onChange={(amount) => {
                                 setAmount(amount);
                                 updateNode(id, { data: { ...data, distortion: amount } });
@@ -32,6 +33,19 @@ export const DistortionNode = ({ id, data }: NodeProps<DistortionNodeType>) => {
                             value={amount}
                             label="Amount"
                             floor={false}
+                        />
+                        <Knob
+                            min={0}
+                            max={1}
+                            onChange={(wet) => {
+                                setWet(wet);
+                                updateNode(id, { data: { ...data, wet: wet } });
+                            }}
+                            value={wet}
+                            label="Wet"
+                            floor={false}
+                            unit="%"
+                            percentage
                         />
                     </div>
 

@@ -1,7 +1,9 @@
-import type { SynthNodeParams } from '../../model/types/NodeTypes';
+import type { PluckSynthNodeParams, SynthNodeParams } from '../../model/types/NodeTypes';
 import * as Tone from 'tone';
 
-export const createSynthFromParams = (params: SynthNodeParams) => {
+// factory functions for creating Tone synth objects
+
+export const createToneSynthFromParams = (params: SynthNodeParams) => {
     const synth = new Tone.Synth({
         volume: params.volume,
         detune: params.detune,
@@ -12,6 +14,17 @@ export const createSynthFromParams = (params: SynthNodeParams) => {
     if (params.oscillator) {
         synth.set({ oscillator: { ...params.oscillator } });
     }
+
+    return synth;
+};
+
+export const createTonePluckSynthFromParams = (params: PluckSynthNodeParams) => {
+    const synth = new Tone.PluckSynth({
+        volume: params.volume,
+        attackNoise: params.attackNoise,
+        resonance: params.resonance,
+        release: params.release,
+    });
 
     return synth;
 };

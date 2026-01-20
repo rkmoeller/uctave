@@ -26,7 +26,7 @@ export const getDefaultSoundDesignerData = () => {
             id: distortionId,
             type: 'distortionNode',
             position: { x: -200, y: -50 },
-            data: { distortion: 0 },
+            data: { distortion: 0, wet: 0.1 },
             dragHandle: '.drag-handle',
         },
         {

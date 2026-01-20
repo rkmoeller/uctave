@@ -1,14 +1,15 @@
 import { GripVertical, KeyboardMusic } from 'lucide-react';
 import { cn } from '../../../../helpers/cn';
 import { type DragEvent } from 'react';
+import type { SynthType } from '../../../../model/types/SynthType';
 
 interface SoundSelectionItemProps {
-    synth: string;
+    synth: SynthType;
 }
 
 export const SynthSelectionItem = ({ synth }: SoundSelectionItemProps) => {
     const onDragStart = (e: DragEvent) => {
-        e.dataTransfer.setData('text/plain', synth);
+        e.dataTransfer.setData('text/plain', synth.type);
     };
 
     return (
@@ -23,7 +24,7 @@ export const SynthSelectionItem = ({ synth }: SoundSelectionItemProps) => {
                     size={14}
                 />
                 <KeyboardMusic size={18} className={'text-zinc-500'} />
-                {synth}
+                {synth.title}
             </button>
         </div>
     );

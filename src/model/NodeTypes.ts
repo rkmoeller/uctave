@@ -1,9 +1,11 @@
 import { DestinationNode } from '../app/soundmaker/nodes/DestinationNode';
 import { DistortionNode } from '../app/soundmaker/nodes/DistortionNode';
+import { PluckSynthNode } from '../app/soundmaker/nodes/PluckSynthNode';
 import { SynthNode } from '../app/soundmaker/nodes/SynthNode';
 
 export const nodeTypes = {
     synthNode: SynthNode,
+    pluckSynthNode: PluckSynthNode,
     destinationNode: DestinationNode,
     distortionNode: DistortionNode,
 };
