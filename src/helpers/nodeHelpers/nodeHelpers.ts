@@ -1,17 +1,17 @@
-import type { SynthNodeParams } from '../../model/types/NodeTypes';
-import * as Tone from 'tone';
+import { nanoid } from 'nanoid';
+import type { XYPosition } from '@xyflow/react';
 
-export const createSynthFromParams = (params: SynthNodeParams) => {
-    const synth = new Tone.Synth({
-        volume: params.volume,
-        detune: params.detune,
-        envelope: params.envelope,
-        portamento: params.portamento,
-    });
-
-    if (params.oscillator) {
-        synth.set({ oscillator: { ...params.oscillator } });
+export const createDefaultNode = (type: string, position: XYPosition) => {
+    switch (type) {
+        case 'Synth':
+            return {
+                id: nanoid(),
+                type: 'synthNode',
+                position: position,
+                data: { title: 'Synth', detune: 1200, volume: 0, portamento: 0 },
+                dragHandle: '.drag-handle',
+            };
+        default:
+            return undefined;
     }
-
-    return synth;
 };

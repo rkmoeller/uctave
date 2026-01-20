@@ -9,10 +9,14 @@ import { cn } from '../../../helpers/cn';
 
 import { toast } from '../../../helpers/toasts/toast';
 import { SoundSelection } from './SoundSelection/SoundSelection';
-import { SynthSelection } from './SynthSelection';
+import { SynthSelection } from './SynthSelection/SynthSelection';
 import { SoundDesignerSave } from './SoundDesignerSave';
 
-export const SoundDesignerToolbar = () => {
+interface SoundDesignerToolbarProps {
+    onOpenChange: (val: boolean) => void;
+}
+
+export const SoundDesignerToolbar = ({ onOpenChange }: SoundDesignerToolbarProps) => {
     const { soundid, projectid } = useParams();
 
     const sound = useLiveQuery(() => {
@@ -29,9 +33,10 @@ export const SoundDesignerToolbar = () => {
     const goToNewSound = () => {
         navigate(`/app/${projectid}/sounddesigner`);
         setOpenPanel(undefined);
+        onOpenChange(false);
     };
 
-    const getPanel = () => {
+    const renderPanel = () => {
         switch (openPanel) {
             case 'soundSelection': {
                 return (
@@ -61,11 +66,13 @@ export const SoundDesignerToolbar = () => {
     const togglePanel = async (newPanel?: string) => {
         if (!newPanel) {
             setOpenPanel(undefined);
+            onOpenChange(false);
             return;
         }
 
         if (openPanel) {
             setOpenPanel(undefined);
+            onOpenChange(false);
 
             // Transition Animation Delay
             await new Promise((resolve) => {
@@ -78,70 +85,75 @@ export const SoundDesignerToolbar = () => {
         }
 
         setOpenPanel(newPanel);
+        onOpenChange(true);
     };
 
     return (
-        <div className="bg-zinc-900 h-14 p-2 border-t border-zinc-800 flex items-center">
-            <div className=" w-full pl-2 flex gap-3">
-                <Button
-                    size="extrasmall"
-                    className="rounded-full"
-                    intent={'secondary'}
-                    onClick={() => togglePanel('soundSelection')}
-                >
-                    {sound ? sound.title : 'Unnamed sound'}
-                </Button>
-                <button
-                    className="rounded-full bg-zinc-700 aspect-square w-6 flex justify-center items-center hover:bg-zinc-600 cursor-pointer"
-                    onClick={goToNewSound}
-                >
-                    <Plus size={14} />
-                </button>
-            </div>
-            <div className="flex justify-center items-center gap-2 m-auto h-full w-full">
-                <button
-                    className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all"
-                    onClick={() => togglePanel('synthSelection')}
-                >
-                    <KeyboardMusic
-                        className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
-                        size={18}
-                    />
-                </button>
+        <>
+            <div className="bg-zinc-900 h-14 p-2 border-t border-zinc-800 flex items-center">
+                <div className=" w-full pl-2 flex gap-3">
+                    <Button
+                        size="extrasmall"
+                        className="rounded-full"
+                        intent={'secondary'}
+                        onClick={() => togglePanel('soundSelection')}
+                    >
+                        {sound ? sound.title : 'Unnamed sound'}
+                    </Button>
+                    <button
+                        className="rounded-full bg-zinc-700 aspect-square w-6 flex justify-center items-center hover:bg-zinc-600 cursor-pointer"
+                        onClick={goToNewSound}
+                    >
+                        <Plus size={14} />
+                    </button>
+                </div>
+                <div className="flex justify-center items-center gap-2 m-auto h-full w-full">
+                    <button
+                        className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all"
+                        onClick={() => togglePanel('synthSelection')}
+                    >
+                        <KeyboardMusic
+                            className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
+                            size={18}
+                        />
+                    </button>
 
-                <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
-                    <SlidersVertical
-                        className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
-                        size={18}
-                    />
-                </button>
+                    <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
+                        <SlidersVertical
+                            className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
+                            size={18}
+                        />
+                    </button>
 
-                <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
-                    <AudioWaveform
-                        className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
-                        size={18}
-                    />
-                </button>
-            </div>
+                    <button className="group hover:bg-neutral-800 p-2 rounded-md flex items-center justify-center cursor-pointer transition-all">
+                        <AudioWaveform
+                            className="opacity-90 group-hover:opacity-100 group-hover:text-primary transition-all"
+                            size={18}
+                        />
+                    </button>
+                </div>
 
-            <div className="w-full flex justify-end">
-                <SoundDesignerSave sound={sound} />
-            </div>
+                <div className="w-full flex justify-end">
+                    <SoundDesignerSave sound={sound} />
+                </div>
 
-            <div
-                className={cn(
-                    'absolute bg-zinc-900/50 left-0 right-0 bottom-13 border-y border-zinc-800 transition-all overflow-hidden backdrop-blur-md',
-                    openPanel ? 'p-4 pb-0 h-64 opacity-100' : 'p-0 h-0 border-0 pointer-events-none'
-                )}
-            >
-                {getPanel()}
-                <button
-                    className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-zinc-800 cursor-pointer"
-                    onClick={() => togglePanel(undefined)}
+                <div
+                    className={cn(
+                        'absolute bg-zinc-900/50 left-0 right-0 bottom-13 border-y border-zinc-800 transition-all overflow-hidden backdrop-blur-md',
+                        openPanel
+                            ? 'p-4 pb-0 h-64 opacity-100'
+                            : 'p-0 h-0 border-0 pointer-events-none'
+                    )}
                 >
-                    <ChevronDown size={16} />
-                </button>
+                    {renderPanel()}
+                    <button
+                        className="absolute top-2 right-2 p-1.5 rounded-full hover:bg-zinc-800 cursor-pointer"
+                        onClick={() => togglePanel(undefined)}
+                    >
+                        <ChevronDown size={16} />
+                    </button>
+                </div>
             </div>
-        </div>
+        </>
     );
 };

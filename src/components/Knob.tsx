@@ -11,6 +11,7 @@ interface KnobProps {
     label?: string;
     hideValue?: boolean;
     floor?: boolean;
+    unit?: string;
 }
 
 export const Knob = ({
@@ -22,6 +23,7 @@ export const Knob = ({
     hideValue = true,
     floor = true,
     onChange,
+    unit,
 }: KnobProps) => {
     const [dragStart, setDragStart] = useState<
         { x: number; y: number; intialValue: number } | undefined
@@ -75,8 +77,9 @@ export const Knob = ({
         <div className="flex flex-col gap-1 items-center w-fit relative">
             {!hideValue && <span className="text-white/30 text-xs">{value}</span>}
             {dragStart && (
-                <div className="absolute -top-7 text-xs rounded px-1.25 py-px font-semibold bg-zinc-800/30 border border-zinc-700 z-100 text-primary-hover">
-                    {value}
+                <div className="absolute -top-7 text-xs rounded space-x-0.5 px-1.25 py-px font-semibold bg-zinc-800/30 border border-zinc-700 z-100 text-primary-hover">
+                    <span>{value}</span>
+                    <span>{unit}</span>
                 </div>
             )}
             <div

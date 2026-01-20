@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 import type { NodeTypeNames } from '../../model/NodeTypes';
 import type { SynthNodeParams } from '../../model/types/NodeTypes';
-import { createSynthFromParams } from '../../helpers/nodeHelpers/nodeHelpers';
+import { createSynthFromParams } from '../../helpers/toneFactories/synthFactories';
 import type { EdgePatch, NodePatch } from '../../model/types/SoundPatch';
 
 export class AudioGraph {
@@ -26,6 +26,8 @@ export class AudioGraph {
 
         this.agNodes = newNodes;
         this.agEdges = newEdges;
+
+        console.log('finished sync');
     }
 
     private updateNodes(nodes: Map<string, NodePatch>) {

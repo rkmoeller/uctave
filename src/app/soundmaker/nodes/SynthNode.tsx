@@ -56,6 +56,7 @@ export const SynthNode = ({ id, data }: NodeProps<SynthNodeType>) => {
                             }}
                             value={volume}
                             label="Volume"
+                            unit="db"
                         />
                         <Knob
                             min={0}
