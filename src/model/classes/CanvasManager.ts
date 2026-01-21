@@ -11,8 +11,6 @@ export class CanvasManager {
 
     private objects: CanvasObject[];
 
-    private hoveredObject: CanvasObject | undefined;
-
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
