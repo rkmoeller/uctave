@@ -4,38 +4,23 @@ import * as Tone from 'tone';
 // These models are used to describe the data that a node can hold to ease conversion between React Flow and Tone.
 
 // Synth Node
-export type SynthNodeParams = {
+export type SynthNodeParams = Omit<Tone.SynthOptions, 'context' | 'onsilence'> & {
     title: string;
-    detune: number;
-    envelope: Tone.EnvelopeOptions;
-    portamento: number;
-    volume: number;
-    oscillator: Tone.OmniOscillatorOptions;
 };
-
 export type SynthNodeType = Node<SynthNodeParams, 'string'>;
 
 // Pluck Synth Node
-export type PluckSynthNodeParams = {
+export type PluckSynthNodeParams = Omit<Tone.PluckSynthOptions, 'context'> & {
     title: string;
-    attackNoise: number;
-    release: Tone.Unit.Time;
-    resonance: number;
-    volume: number;
 };
-
 export type PluckSynthNodeType = Node<PluckSynthNodeParams, 'string'>;
 
 // Distortion Node
-export type DistortionNodeParams = {
+export type DistortionNodeParams = Omit<Tone.DistortionOptions, 'context'> & {
     title: string;
-    distortion: number;
-    wet: number;
 };
-
 export type DistortionNodeType = Node<DistortionNodeParams, 'string'>;
 
 // Destination Node
 export type DestinationNodeParams = {};
-
 export type DestinationNodeType = Node<DestinationNodeParams, 'string'>;

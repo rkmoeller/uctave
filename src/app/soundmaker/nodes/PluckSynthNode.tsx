@@ -19,7 +19,7 @@ export const PluckSynthNode = ({ id, data }: NodeProps<PluckSynthNodeType>) => {
     const [volume, setVolume] = useState<number>(data.volume);
     const [release, setRelease] = useState<Tone.Unit.Time>(data.release);
     const [resonance, setResonance] = useState<number>(data.resonance);
-    // const [envelope, setEnvelope] = useState<Omit<Tone.EnvelopeOptions, 'context'>>(data.envelope);
+    const [dampening, setDampening] = useState<Tone.Unit.Frequency>(data.dampening);
 
     const { selectedNodes } = useSoundDesignerStore();
     const isSelected = selectedNodes.some((node) => node.id === id);
@@ -61,8 +61,8 @@ export const PluckSynthNode = ({ id, data }: NodeProps<PluckSynthNodeType>) => {
                             unit="db"
                         />
                         <Knob
-                            min={0}
-                            max={1}
+                            min={0.8}
+                            max={0.99}
                             onChange={(r) => {
                                 setResonance(r);
                                 updateNode(id, { data: { ...data, resonance: r } });
@@ -72,8 +72,8 @@ export const PluckSynthNode = ({ id, data }: NodeProps<PluckSynthNodeType>) => {
                             floor={false}
                         />
                         <Knob
-                            min={0}
-                            max={2000}
+                            min={1}
+                            max={30}
                             onChange={(an) => {
                                 setAttackNoise(an);
                                 updateNode(id, { data: { ...data, attackNoise: an } });
@@ -85,15 +85,28 @@ export const PluckSynthNode = ({ id, data }: NodeProps<PluckSynthNodeType>) => {
 
                         <Knob
                             min={0}
-                            max={5}
+                            max={2000}
                             onChange={(r) => {
                                 setRelease(r);
-                                updateNode(id, { data: { ...data, release: r } });
+                                updateNode(id, { data: { ...data, release: Tone.Time(r) } });
                             }}
-                            value={release}
-                            label="Attack noise"
+                            value={release as number}
+                            label="Release"
                             floor={false}
                             unit="ms"
+                        />
+
+                        <Knob
+                            min={500}
+                            max={7000}
+                            onChange={(d) => {
+                                setDampening(d);
+                                updateNode(id, { data: { ...data, dampening: d } });
+                            }}
+                            value={dampening as number}
+                            label="Dampening"
+                            floor={false}
+                            unit="hz"
                         />
                     </div>
 

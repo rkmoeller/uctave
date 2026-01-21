@@ -1,20 +1,21 @@
 import { nanoid } from 'nanoid';
-import type { XYPosition } from '@xyflow/react';
+import type { Node, XYPosition } from '@xyflow/react';
+import * as Tone from 'tone';
 
 /**
- * Creates a node with default values based on its type and a given position.
+ * Creates a React Flow node object with default values based on its type and a given position.
  * May return undefined if provided with unknown type name.
  * @param type
  * @param position
  */
-export const createDefaultNode = (type: string, position: XYPosition) => {
+export const createDefaultNode = (type: string, position: XYPosition): Node | undefined => {
     switch (type) {
         case 'synth':
             return {
                 id: nanoid(),
                 type: 'synthNode',
                 position: position,
-                data: { title: 'Synth', detune: 1200, volume: 0, portamento: 0 },
+                data: { title: 'Synth', ...Tone.Synth.getDefaults() },
                 dragHandle: '.drag-handle',
             };
         case 'pluckSynth':
@@ -23,11 +24,8 @@ export const createDefaultNode = (type: string, position: XYPosition) => {
                 type: 'pluckSynthNode',
                 position: position,
                 data: {
-                    title: 'Synth',
-                    attackNoise: 0.5,
-                    volume: 0,
-                    resonance: 0.5,
-                    release: 1000,
+                    title: 'Pluck Synth',
+                    ...Tone.PluckSynth.getDefaults(),
                 },
                 dragHandle: '.drag-handle',
             };
