@@ -17,6 +17,9 @@ export class CanvasManager {
     private dragStartBeat: number | undefined;
     private dragStartTrack: number | undefined;
 
+    private rafId: number | null = null;
+    private needsRender = false;
+
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -97,6 +100,7 @@ export class CanvasManager {
         this.drawGrid(10);
         this.drawObjects();
         this.drawTopbar();
+        console.log('RENDER');
     }
 
     clear() {
@@ -173,6 +177,9 @@ export class CanvasManager {
                 this.clear();
                 this.render();
             }
+
+            // this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
+            // this.scheduleRender();
         }
     }
 
@@ -188,8 +195,9 @@ export class CanvasManager {
     }
 
     onMouseUp(e: MouseEvent) {
+        const { x, y } = this.mouseToCanvasCoords(e.pageX, e.pageY);
         if (this.draggedObject) {
-            this.draggedObject?.mouseUp();
+            this.draggedObject?.mouseUp(x, y);
             this.draggedObject = undefined;
         }
     }
@@ -204,5 +212,16 @@ export class CanvasManager {
 
     private getTrackByCoords(x: number, y: number) {
         //
+    }
+
+    private scheduleRender() {
+        if (this.needsRender) return; // Already scheduled
+
+        this.needsRender = true;
+        this.rafId = requestAnimationFrame(() => {
+            this.clear();
+            this.render();
+            this.needsRender = false;
+        });
     }
 }

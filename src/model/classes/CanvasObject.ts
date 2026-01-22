@@ -9,31 +9,23 @@ export class CanvasObject {
     public startBeat: number;
     public duration: number;
     public track: number;
-    public color: string;
+    public baseColor: string = '#00d5be';
+    public activeColor: string = 'red';
 
-    private _isHovered: boolean = false;
+    public _state: 'default' | 'hovered' | 'dragging' = 'default';
 
-    get isHovered() {
-        return this._isHovered;
+    get state() {
+        return this._state;
     }
 
-    set isHovered(value: boolean) {
-        if (value === true) {
-            this.color = 'red';
-            if (this.isHovered !== true) {
-                this.draw();
-            }
-        } else {
-            this.color = '#00d5be';
-            if (this.isHovered === true) {
-                this.draw();
-            }
+    set state(value: 'default' | 'hovered' | 'dragging') {
+        if (this._state === value) {
+            return;
         }
 
-        this._isHovered = value;
+        this._state = value;
+        this.draw();
     }
-
-    private isDragging: boolean = false;
 
     constructor(
         cm: CanvasManager,
@@ -48,11 +40,10 @@ export class CanvasObject {
         this.startBeat = startBeat;
         this.duration = duration;
         this.track = track;
-        this.color = '#00d5be';
     }
 
     draw() {
-        this.ctx.fillStyle = this.color;
+        this.ctx.fillStyle = this.getColorByState();
         this.ctx.beginPath();
 
         const { x, y, width, height } = this.getMetrics();
@@ -71,30 +62,41 @@ export class CanvasObject {
     }
 
     mouseMove(mouseX: number, mouseY: number) {
-        const { x: objX, y: objY, width, height } = this.getMetrics();
+        const isInBounds = this.isCursorWithinBounds(mouseX, mouseY);
 
-        const topLeft = {
-            x: objX + this.ctx.getTransform().e,
-            y: objY + this.ctx.getTransform().f + this.cm.topbarHeight,
-        };
-        const bottomRight = {
-            x: objX + width + this.ctx.getTransform().e,
-            y: objY + height + this.ctx.getTransform().f + this.cm.topbarHeight,
-        };
-
-        if (
-            mouseX > topLeft.x &&
-            mouseX < bottomRight.x &&
-            mouseY > topLeft.y &&
-            mouseY < bottomRight.y
-        ) {
-            this.isHovered = true;
+        // If I end up needing more states, consider a proper state machine
+        if (isInBounds) {
+            if (this.state !== 'dragging') {
+                this.state = 'hovered';
+                return;
+            }
         } else {
-            this.isHovered = false;
+            if (this.state !== 'dragging') {
+                this.state = 'default';
+            }
         }
     }
 
     mouseDown(mouseX: number, mouseY: number) {
+        const isInBounds = this.isCursorWithinBounds(mouseX, mouseY);
+
+        if (isInBounds) {
+            this.state = 'dragging';
+            return true;
+        }
+    }
+
+    mouseUp(mouseX: number, mouseY: number) {
+        const isInBounds = this.isCursorWithinBounds(mouseX, mouseY);
+        if (isInBounds) {
+            this.state = 'hovered';
+            return;
+        }
+
+        this.state = 'default';
+    }
+
+    isCursorWithinBounds(mouseX: number, mouseY: number) {
         const { x: objX, y: objY, width, height } = this.getMetrics();
 
         const topLeft = {
@@ -112,12 +114,21 @@ export class CanvasObject {
             mouseY > topLeft.y &&
             mouseY < bottomRight.y
         ) {
-            this.isDragging = true;
             return true;
         }
+        return false;
     }
 
-    mouseUp() {
-        this.isDragging = false;
+    private getColorByState() {
+        switch (this.state) {
+            case 'dragging':
+                return 'red';
+            case 'hovered':
+                return 'red';
+            case 'default':
+                return '#00d5be';
+            default:
+                return '#00d5be';
+        }
     }
 }
