@@ -1,4 +1,4 @@
-import { type WheelEvent, type MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { CanvasObject } from './CanvasObject';
 
 export class CanvasManager {
@@ -10,20 +10,25 @@ export class CanvasManager {
     public trackHeight = 80;
     public topbarHeight = 25;
 
-    private objects: CanvasObject[];
+    private objects: CanvasObject[] = [];
 
     private draggedObject: CanvasObject | undefined;
     private dragStart: { x: number; y: number } | undefined;
     private dragStartBeat: number | undefined;
+    private dragStartTrack: number | undefined;
 
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
 
-        this.objects = [
-            new CanvasObject(this, this.ctx, 5, 8, 3),
-            new CanvasObject(this, this.ctx, 18, 4, 2),
-        ];
+        this.clear();
+        this.render();
+    }
+
+    setObjects(objects: { startBeat: number; duration: number; track: number }[]) {
+        this.objects = objects.map((o) => {
+            return new CanvasObject(this, this.ctx, o.startBeat, o.duration, o.track);
+        });
 
         this.clear();
         this.render();
@@ -63,7 +68,7 @@ export class CanvasManager {
         const savedTransform = this.ctx.getTransform();
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-        this.ctx.fillStyle = '#141414';
+        this.ctx.fillStyle = 'oklch(0.1839 0.0041 285.97)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.topbarHeight);
 
         this.ctx.fillStyle = 'oklch(1 0 22 / 5%)';
@@ -104,6 +109,14 @@ export class CanvasManager {
 
         const newX = currentTransform.e + e.deltaY * -1;
         const newY = currentTransform.f + e.deltaY * -1;
+
+        if (e.ctrlKey) {
+            e.preventDefault();
+            this.zoom = Math.max(this.zoom + (e.deltaY / 1000) * -1, 0.5);
+            this.clear();
+            this.render();
+            return;
+        }
 
         if (e.shiftKey) {
             if (newX > 0) {
@@ -155,8 +168,9 @@ export class CanvasManager {
 
             // Only rerender if the beat actually changes
             if (this.draggedObject.startBeat !== this.dragStartBeat + beatDiff) {
-                this.clear();
                 this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
+
+                this.clear();
                 this.render();
             }
         }
@@ -169,6 +183,7 @@ export class CanvasManager {
 
         this.dragStart = { x, y };
         this.dragStartBeat = obj?.startBeat;
+        this.dragStartTrack = obj?.track;
         this.draggedObject = obj;
     }
 
