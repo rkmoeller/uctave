@@ -29,8 +29,12 @@ export const ArrangementCanvas = () => {
         canvasManagerRef.current?.onMouseMove(e);
     };
 
-    const onClick = (e: MouseEvent) => {
-        canvasManagerRef.current?.onClick(e);
+    const onMouseDown = (e: MouseEvent) => {
+        canvasManagerRef.current?.onMouseDown(e);
+    };
+
+    const onMouseUp = (e: MouseEvent) => {
+        canvasManagerRef.current?.onMouseUp(e);
     };
 
     useEffect(() => {
@@ -45,7 +49,8 @@ export const ArrangementCanvas = () => {
             height={4000}
             onWheel={onScroll}
             onMouseMove={onMouseMove}
-            onClick={onClick}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
         />
     );
 };

@@ -6,10 +6,10 @@ export class CanvasObject {
     private cm: CanvasManager;
 
     public id: string;
-    private startBeat: number;
-    private duration: number;
-    private track: number;
-    private color: string;
+    public startBeat: number;
+    public duration: number;
+    public track: number;
+    public color: string;
 
     private _isHovered: boolean = false;
 
@@ -32,6 +32,8 @@ export class CanvasObject {
 
         this._isHovered = value;
     }
+
+    private isDragging: boolean = false;
 
     constructor(
         cm: CanvasManager,
@@ -65,12 +67,10 @@ export class CanvasObject {
         const x = this.startBeat * this.cm.barWidth * this.cm.zoom;
         const y = this.cm.trackHeight * this.track - this.cm.trackHeight;
 
-        // console.log(this.ctx.getTransform());
-
         return { width, height, x, y };
     }
 
-    hover(mouseX: number, mouseY: number) {
+    mouseMove(mouseX: number, mouseY: number) {
         const { x: objX, y: objY, width, height } = this.getMetrics();
 
         const topLeft = {
@@ -92,5 +92,36 @@ export class CanvasObject {
         } else {
             this.isHovered = false;
         }
+    }
+
+    mouseDown(mouseX: number, mouseY: number) {
+        const { x: objX, y: objY, width, height } = this.getMetrics();
+
+        const topLeft = {
+            x: objX + this.ctx.getTransform().e,
+            y: objY + this.ctx.getTransform().f,
+        };
+        const bottomRight = {
+            x: objX + width + this.ctx.getTransform().e,
+            y: objY + height + this.ctx.getTransform().f,
+        };
+
+        if (
+            mouseX > topLeft.x &&
+            mouseX < bottomRight.x &&
+            mouseY > topLeft.y &&
+            mouseY < bottomRight.y
+        ) {
+            this.isDragging = true;
+            return true;
+        }
+    }
+
+    mouseUp() {
+        this.isDragging = false;
+    }
+
+    move(beatDifference: number) {
+        this.startBeat += beatDifference;
     }
 }

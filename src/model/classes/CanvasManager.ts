@@ -11,6 +11,10 @@ export class CanvasManager {
 
     private objects: CanvasObject[];
 
+    private draggedObject: CanvasObject | undefined;
+    private dragStart: { x: number; y: number } | undefined;
+    private dragStartBeat: number | undefined;
+
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -101,25 +105,37 @@ export class CanvasManager {
     onMouseMove(e: MouseEvent) {
         const { x, y } = this.mouseToCanvasCoords(e.pageX, e.pageY);
 
-        this.objects.find((object) => object.hover(x, y));
+        this.objects.forEach((object) => object.mouseMove(x, y));
+
+        if (this.draggedObject && this.dragStart && this.dragStartBeat) {
+            const dragDiff = x - this.dragStart.x;
+
+            const beatDiff = Math.round(dragDiff / (this.barWidth * this.zoom));
+
+            // Only rerender if the beat actually changes
+            if (this.draggedObject.startBeat !== this.dragStartBeat + beatDiff) {
+                this.clear();
+                this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
+                this.draw();
+            }
+        }
     }
 
-    onClick(e: MouseEvent) {
+    onMouseDown(e: MouseEvent) {
         const { x, y } = this.mouseToCanvasCoords(e.pageX, e.pageY);
 
-        const foundObject = this.objects.find((object) => {
-            const { x: objX, y: objY, width, height } = object.getMetrics();
+        const obj = this.objects.find((object) => object.mouseDown(x, y));
 
-            const topLeft = { x: objX, y: objY };
-            const bottomRight = { x: objX + width, y: objY + height };
+        this.dragStart = { x, y };
+        this.dragStartBeat = obj?.startBeat;
+        this.draggedObject = obj;
+    }
 
-            if (x > topLeft.x && x < bottomRight.x && y > topLeft.y && y < bottomRight.y) {
-                return object;
-            }
-        });
-
-        console.log(foundObject);
-        // Do something with found object..
+    onMouseUp(e: MouseEvent) {
+        if (this.draggedObject) {
+            this.draggedObject?.mouseUp();
+            this.draggedObject = undefined;
+        }
     }
 
     // Helpers
