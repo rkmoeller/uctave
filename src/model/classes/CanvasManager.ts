@@ -24,6 +24,7 @@ export class CanvasManager {
             new CanvasObject(this, this.ctx, 18, 4, 2),
         ];
 
+        this.clear();
         this.draw();
     }
 
@@ -56,7 +57,7 @@ export class CanvasManager {
     }
 
     clear() {
-        this.ctx.resetTransform();
+        // this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 

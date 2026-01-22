@@ -57,7 +57,7 @@ export class CanvasObject {
 
         const { x, y, width, height } = this.getMetrics();
 
-        this.ctx.roundRect(x, y, width, height, [10]);
+        this.ctx.roundRect(x, y + 4, width, height - 8, [10]);
         this.ctx.fill();
     }
 
@@ -119,9 +119,5 @@ export class CanvasObject {
 
     mouseUp() {
         this.isDragging = false;
-    }
-
-    move(beatDifference: number) {
-        this.startBeat += beatDifference;
     }
 }
