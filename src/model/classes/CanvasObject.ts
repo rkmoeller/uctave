@@ -57,14 +57,14 @@ export class CanvasObject {
 
         const { x, y, width, height } = this.getMetrics();
 
-        this.ctx.roundRect(x, y + 4, width, height - 8, [10]);
+        this.ctx.roundRect(x, y + 4 + this.cm.topbarHeight, width, height - 8, [10]);
         this.ctx.fill();
     }
 
     getMetrics() {
-        const width = this.duration * this.cm.barWidth * this.cm.zoom;
+        const width = this.duration * this.cm.beatWidth * this.cm.zoom;
         const height = this.cm.trackHeight;
-        const x = this.startBeat * this.cm.barWidth * this.cm.zoom;
+        const x = this.startBeat * this.cm.beatWidth * this.cm.zoom;
         const y = this.cm.trackHeight * this.track - this.cm.trackHeight;
 
         return { width, height, x, y };
@@ -75,11 +75,11 @@ export class CanvasObject {
 
         const topLeft = {
             x: objX + this.ctx.getTransform().e,
-            y: objY + this.ctx.getTransform().f,
+            y: objY + this.ctx.getTransform().f + this.cm.topbarHeight,
         };
         const bottomRight = {
             x: objX + width + this.ctx.getTransform().e,
-            y: objY + height + this.ctx.getTransform().f,
+            y: objY + height + this.ctx.getTransform().f + this.cm.topbarHeight,
         };
 
         if (
@@ -99,11 +99,11 @@ export class CanvasObject {
 
         const topLeft = {
             x: objX + this.ctx.getTransform().e,
-            y: objY + this.ctx.getTransform().f,
+            y: objY + this.ctx.getTransform().f + this.cm.topbarHeight,
         };
         const bottomRight = {
             x: objX + width + this.ctx.getTransform().e,
-            y: objY + height + this.ctx.getTransform().f,
+            y: objY + height + this.ctx.getTransform().f + this.cm.topbarHeight,
         };
 
         if (

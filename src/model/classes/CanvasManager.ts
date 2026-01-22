@@ -6,8 +6,9 @@ export class CanvasManager {
     private ctx;
 
     public zoom = 1;
-    public barWidth = 15;
+    public beatWidth = 15;
     public trackHeight = 80;
+    public topbarHeight = 25;
 
     private objects: CanvasObject[];
 
@@ -25,39 +26,75 @@ export class CanvasManager {
         ];
 
         this.clear();
-        this.draw();
+        this.render();
     }
 
     // Rendering
     drawGrid(amountOfTracks: number) {
         this.ctx.fillStyle = 'oklch(1 0 22 / 5%)';
-
+        // Draw horizontal track lines
         for (let i = 0; i < amountOfTracks; i++) {
-            this.ctx.fillRect(0, this.trackHeight * (i + 1), this.canvas.width, 1);
+            this.ctx.fillRect(
+                0,
+                this.trackHeight * (i + 1) + this.topbarHeight,
+                this.canvas.width,
+                1
+            );
         }
 
-        this.ctx.fillStyle = 'oklch(1 0 22 / 2%)';
-        for (let i = 0; i < 100; i++) {
+        // Draw vertical beat lines
+        for (let i = 0; i < this.canvas.width / this.beatWidth; i++) {
+            if ((i + 1) % 4 === 0) {
+                this.ctx.fillStyle = 'oklch(1 0 22 / 3%)';
+            } else {
+                this.ctx.fillStyle = 'oklch(1 0 22 / 1%)';
+            }
+
             this.ctx.fillRect(
-                (i + 1) * (this.barWidth * this.zoom),
-                0,
+                (i + 1) * (this.beatWidth * this.zoom),
+                this.topbarHeight,
                 1,
                 amountOfTracks * this.trackHeight
             );
         }
     }
 
+    drawTopbar() {
+        const savedTransform = this.ctx.getTransform();
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        this.ctx.fillStyle = '#141414';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.topbarHeight);
+
+        this.ctx.fillStyle = 'oklch(1 0 22 / 5%)';
+        this.ctx.fillRect(0, this.topbarHeight, this.canvas.width, 1);
+
+        this.ctx.fillStyle = 'oklch(1 0 22 / 20%)';
+        for (let i = 0; i < this.canvas.width / (this.beatWidth * 4); i++) {
+            this.ctx.font = '200 12px inter ';
+            this.ctx.fillText(`${i}`, i * (this.beatWidth * 4 * this.zoom) + 8, 17);
+        }
+
+        this.ctx.fillStyle = 'oklch(1 0 22 / 3%)';
+        for (let i = 0; i < this.canvas.width / (this.beatWidth * 4); i++) {
+            this.ctx.fillRect((i + 1) * (this.beatWidth * 4 * this.zoom), 0, 1, this.topbarHeight);
+        }
+
+        // Restore transform
+        this.ctx.setTransform(savedTransform);
+    }
+
     drawObjects() {
         this.objects.forEach((object) => object.draw());
     }
 
-    draw() {
+    render() {
         this.drawGrid(10);
         this.drawObjects();
+        this.drawTopbar();
     }
 
     clear() {
-        // this.ctx.resetTransform();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
@@ -77,8 +114,6 @@ export class CanvasManager {
                 return;
             }
         }
-
-        this.clear();
 
         if (e.shiftKey) {
             this.ctx.setTransform({
@@ -100,7 +135,8 @@ export class CanvasManager {
             });
         }
 
-        this.draw();
+        this.clear();
+        this.render();
     }
 
     onMouseMove(e: MouseEvent) {
@@ -108,16 +144,20 @@ export class CanvasManager {
 
         this.objects.forEach((object) => object.mouseMove(x, y));
 
-        if (this.draggedObject && this.dragStart && this.dragStartBeat) {
+        if (
+            this.draggedObject !== undefined &&
+            this.dragStart !== undefined &&
+            this.dragStartBeat !== undefined
+        ) {
             const dragDiff = x - this.dragStart.x;
 
-            const beatDiff = Math.round(dragDiff / (this.barWidth * this.zoom));
+            const beatDiff = Math.round(dragDiff / (this.beatWidth * this.zoom));
 
             // Only rerender if the beat actually changes
             if (this.draggedObject.startBeat !== this.dragStartBeat + beatDiff) {
                 this.clear();
                 this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
-                this.draw();
+                this.render();
             }
         }
     }
@@ -145,5 +185,9 @@ export class CanvasManager {
         const x = mouseX - rect.left;
         const y = mouseY - rect.top;
         return { x, y };
+    }
+
+    private getTrackByCoords(x: number, y: number) {
+        //
     }
 }
