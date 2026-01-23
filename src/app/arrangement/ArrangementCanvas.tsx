@@ -48,17 +48,9 @@ export const ArrangementCanvas = () => {
         canvasManagerRef?.current?.setObjects(defaultObjects);
     }, [defaultObjects]);
 
-    const onMouseMove = (e: MouseEvent) => {
-        canvasManagerRef.current?.onMouseMove(e);
-    };
-
-    const onMouseDown = (e: MouseEvent) => {
-        canvasManagerRef.current?.onMouseDown(e);
-    };
-
-    const onMouseUp = (e: MouseEvent) => {
-        canvasManagerRef.current?.onMouseUp(e);
-    };
+    const onMouseMove = (e: MouseEvent) => canvasManagerRef.current?.onMouseMove(e);
+    const onMouseDown = (e: MouseEvent) => canvasManagerRef.current?.onMouseDown(e);
+    const onMouseUp = (e: MouseEvent) => canvasManagerRef.current?.onMouseUp(e);
 
     useEffect(() => {
         init();

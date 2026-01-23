@@ -100,7 +100,6 @@ export class CanvasManager {
         this.drawGrid(10);
         this.drawObjects();
         this.drawTopbar();
-        console.log('RENDER');
     }
 
     clear() {
