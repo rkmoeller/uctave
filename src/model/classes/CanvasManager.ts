@@ -20,16 +20,16 @@ export class CanvasManager {
     private draggedObject: CanvasObject | undefined;
     private dragStart: { x: number; y: number } | undefined;
     private dragStartBeat: number | undefined;
-    private dragStartTrack: number | undefined;
 
-    private playheadPosition: number = 0; // Current beat position
+    private playheadBeats = 0;
     private rafId: number | null = null;
+    private needsRender = false;
 
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
 
-        this.render();
+        this.scheduleRender();
     }
 
     setObjects(objects: { startBeat: number; duration: number; track: number }[]) {
@@ -37,7 +37,7 @@ export class CanvasManager {
             return new CanvasObject(this.canvas, this, this.ctx, o.startBeat, o.duration, o.track);
         });
 
-        this.render();
+        this.scheduleRender();
     }
 
     // Rendering
@@ -83,7 +83,7 @@ export class CanvasManager {
         this.ctx.fillStyle = 'oklch(1 0 22 / 20%)';
         for (let i = 0; i < this.canvas.width / (this.beatWidth * 4); i++) {
             this.ctx.font = '200 12px inter ';
-            this.ctx.fillText(`${i}`, i * (this.beatWidth * 4 * this.zoom) + 8, 17);
+            this.ctx.fillText(`${i + 1}`, i * (this.beatWidth * 4 * this.zoom) + 8, 17);
         }
 
         this.ctx.fillStyle = 'oklch(1 0 22 / 3%)';
@@ -94,10 +94,11 @@ export class CanvasManager {
         this.ctx.setTransform(savedTransform);
     }
 
-    private drawTimeIndicator() {
+    private drawPlayhead() {
+        const pixelPosition = this.playheadBeats * this.beatWidth * this.zoom;
+
         const savedTransform = this.ctx.getTransform();
-        this.ctx.setTransform(1, 0, 0, 1, savedTransform.e, 0);
-        this.ctx.translate(this.playheadPosition * this.zoom, 0);
+        this.ctx.setTransform(1, 0, 0, 1, pixelPosition, 0);
 
         const center = 0;
         const width = 18;
@@ -126,21 +127,32 @@ export class CanvasManager {
         this.ctx.setTransform(savedTransform);
     }
 
-    drawObjects() {
+    private drawObjects() {
         this.objects.forEach((object) => object.draw());
     }
 
-    clear() {
+    private clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    render() {
+    private render() {
         this.clear();
 
         this.drawGrid();
         this.drawObjects();
         this.drawTopbar();
-        this.drawTimeIndicator();
+        this.drawPlayhead();
+    }
+
+    // Batch renders to accomodate refresh rate
+    private scheduleRender() {
+        if (this.needsRender) return;
+
+        this.needsRender = true;
+        requestAnimationFrame(() => {
+            this.render();
+            this.needsRender = false;
+        });
     }
 
     // Event Handlers
@@ -154,7 +166,7 @@ export class CanvasManager {
         if (e.ctrlKey) {
             e.preventDefault();
             this.zoom = Math.max(this.zoom + (e.deltaY / 1000) * -1, 0.5);
-            this.render();
+            this.scheduleRender();
             return;
         }
 
@@ -189,7 +201,7 @@ export class CanvasManager {
             });
         }
 
-        this.render();
+        this.scheduleRender();
     }
 
     onMouseMove(e: MouseEvent) {
@@ -197,6 +209,7 @@ export class CanvasManager {
 
         this.objects.forEach((object) => object.mouseMove(x, y));
 
+        // Track whether a rerender is required
         let needsRender = false;
 
         if (
@@ -213,13 +226,14 @@ export class CanvasManager {
                 needsRender = true;
             }
 
-            // Only rerender if the beat actually changes
             if (this.draggedObject.startBeat !== this.dragStartBeat + beatDiff) {
                 this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
                 needsRender = true;
             }
 
-            if (needsRender) this.render();
+            if (needsRender) {
+                this.scheduleRender();
+            }
         }
     }
 
@@ -230,7 +244,6 @@ export class CanvasManager {
 
         this.dragStart = { x, y };
         this.dragStartBeat = obj?.startBeat;
-        this.dragStartTrack = obj?.track;
         this.draggedObject = obj;
     }
 
@@ -255,21 +268,18 @@ export class CanvasManager {
 
     stopPlayback() {
         Tone.getTransport().stop();
-        this.playheadPosition = 0;
+        this.playheadBeats = 0;
         this.stopPlayheadAnimation();
-        this.render();
+        this.scheduleRender();
     }
 
     private startPlayheadAnimation() {
         Tone.getTransport().set({ bpm: this.bpm });
 
         const animate = () => {
-            // Get current position in beats
-            this.playheadPosition =
-                (this.bpm / 60) * Tone.getTransport().seconds * this.beatWidth * this.zoom;
+            this.playheadBeats = (this.bpm / 60) * Tone.getTransport().seconds;
 
-            this.render();
-
+            this.scheduleRender();
             this.rafId = requestAnimationFrame(animate);
         };
 
@@ -288,7 +298,9 @@ export class CanvasManager {
         const rect = this.canvas.getBoundingClientRect();
         const x = mouseX - rect.left;
         const y = mouseY - rect.top;
-        return { x, y };
+
+        const transform = this.ctx.getTransform();
+        return { x: x - transform.e, y: y - transform.f };
     }
 
     private getTrackByYCoords(y: number): number | undefined {
