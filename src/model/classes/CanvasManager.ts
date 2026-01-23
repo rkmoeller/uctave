@@ -69,7 +69,7 @@ export class CanvasManager {
 
     drawTopbar() {
         const savedTransform = this.ctx.getTransform();
-        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.setTransform(1, 0, 0, 1, savedTransform.e, 0);
 
         this.ctx.fillStyle = 'oklch(0.1839 0.0041 285.97)';
         this.ctx.fillRect(0, 0, this.canvas.width, this.topbarHeight);
@@ -88,7 +88,6 @@ export class CanvasManager {
             this.ctx.fillRect((i + 1) * (this.beatWidth * 4 * this.zoom), 0, 1, this.topbarHeight);
         }
 
-        // Restore transform
         this.ctx.setTransform(savedTransform);
     }
 
