@@ -1,7 +1,9 @@
 import { nanoid } from 'nanoid';
 import type { CanvasManager } from './CanvasManager';
+import type { CanvasObjectState } from '../types/CanvasObjectState';
 
 export class CanvasObject {
+    private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private cm: CanvasManager;
 
@@ -12,28 +14,32 @@ export class CanvasObject {
     public baseColor: string = '#00d5be';
     public activeColor: string = 'red';
 
-    public _state: 'default' | 'hovered' | 'dragging' = 'default';
+    public _state: CanvasObjectState = 'default';
 
     get state() {
         return this._state;
     }
 
-    set state(value: 'default' | 'hovered' | 'dragging') {
+    set state(value: CanvasObjectState) {
         if (this._state === value) {
             return;
         }
+
+        this.canvas.style.cursor = this.getCursorByState(value);
 
         this._state = value;
         this.draw();
     }
 
     constructor(
+        canvas: HTMLCanvasElement,
         cm: CanvasManager,
         ctx: CanvasRenderingContext2D,
         startBeat: number,
         duration: number,
         track: number
     ) {
+        this.canvas = canvas;
         this.cm = cm;
         this.ctx = ctx;
         this.id = nanoid();
@@ -66,12 +72,12 @@ export class CanvasObject {
 
         // If I end up needing more states, consider a proper state machine
         if (isInBounds) {
-            if (this.state !== 'dragging') {
-                this.state = 'hovered';
+            if (this.state !== 'drag') {
+                this.state = 'hover';
                 return;
             }
         } else {
-            if (this.state !== 'dragging') {
+            if (this.state !== 'drag') {
                 this.state = 'default';
             }
         }
@@ -81,7 +87,7 @@ export class CanvasObject {
         const isInBounds = this.isCursorWithinBounds(mouseX, mouseY);
 
         if (isInBounds) {
-            this.state = 'dragging';
+            this.state = 'drag';
             return true;
         }
     }
@@ -89,7 +95,7 @@ export class CanvasObject {
     mouseUp(mouseX: number, mouseY: number) {
         const isInBounds = this.isCursorWithinBounds(mouseX, mouseY);
         if (isInBounds) {
-            this.state = 'hovered';
+            this.state = 'hover';
             return;
         }
 
@@ -121,14 +127,27 @@ export class CanvasObject {
 
     private getColorByState() {
         switch (this.state) {
-            case 'dragging':
-                return 'red';
-            case 'hovered':
-                return 'red';
+            case 'drag':
+                return 'oklch(0.8593 0.1546 181.3 / 30%)';
+            case 'hover':
+                return 'oklch(0.8593 0.1546 181.3 )';
             case 'default':
-                return '#00d5be';
+                return 'oklch(0.783 0.1408 181.38)';
             default:
-                return '#00d5be';
+                return 'oklch(0.783 0.1408 181.38)';
+        }
+    }
+
+    private getCursorByState(state: CanvasObjectState) {
+        switch (state) {
+            case 'drag':
+                return 'pointer';
+            case 'hover':
+                return 'pointer';
+            case 'default':
+                return 'default';
+            default:
+                return 'default';
         }
     }
 }

@@ -30,7 +30,7 @@ export class CanvasManager {
 
     setObjects(objects: { startBeat: number; duration: number; track: number }[]) {
         this.objects = objects.map((o) => {
-            return new CanvasObject(this, this.ctx, o.startBeat, o.duration, o.track);
+            return new CanvasObject(this.canvas, this, this.ctx, o.startBeat, o.duration, o.track);
         });
 
         this.clear();
@@ -214,7 +214,7 @@ export class CanvasManager {
     }
 
     private scheduleRender() {
-        if (this.needsRender) return; // Already scheduled
+        if (this.needsRender) return;
 
         this.needsRender = true;
         this.rafId = requestAnimationFrame(() => {
