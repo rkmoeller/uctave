@@ -95,9 +95,10 @@ export class CanvasManager {
     }
 
     private drawPlayhead() {
-        const pixelPosition = this.playheadBeats * this.beatWidth * this.zoom;
-
         const savedTransform = this.ctx.getTransform();
+
+        const pixelPosition = this.playheadBeats * this.beatWidth * this.zoom + savedTransform.e;
+
         this.ctx.setTransform(1, 0, 0, 1, pixelPosition, 0);
 
         const center = 0;
