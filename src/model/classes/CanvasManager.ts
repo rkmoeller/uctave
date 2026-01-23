@@ -1,14 +1,19 @@
 import { type MouseEvent } from 'react';
 import { CanvasObject } from './CanvasObject';
+import * as Tone from 'tone';
 
 export class CanvasManager {
     private canvas;
     private ctx;
 
+    public bpm = 128;
+
     public zoom = 1;
     public beatWidth = 15;
     public trackHeight = 80;
     public topbarHeight = 25;
+
+    public tracks = 10;
 
     private objects: CanvasObject[] = [];
 
@@ -17,14 +22,13 @@ export class CanvasManager {
     private dragStartBeat: number | undefined;
     private dragStartTrack: number | undefined;
 
+    private playheadPosition: number = 0; // Current beat position
     private rafId: number | null = null;
-    private needsRender = false;
 
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
         this.canvas = canvas;
         this.ctx = ctx;
 
-        this.clear();
         this.render();
     }
 
@@ -33,15 +37,14 @@ export class CanvasManager {
             return new CanvasObject(this.canvas, this, this.ctx, o.startBeat, o.duration, o.track);
         });
 
-        this.clear();
         this.render();
     }
 
     // Rendering
-    drawGrid(amountOfTracks: number) {
+    private drawGrid() {
         this.ctx.fillStyle = 'oklch(1 0 22 / 5%)';
         // Draw horizontal track lines
-        for (let i = 0; i < amountOfTracks; i++) {
+        for (let i = 0; i < this.tracks; i++) {
             this.ctx.fillRect(
                 0,
                 this.trackHeight * (i + 1) + this.topbarHeight,
@@ -62,12 +65,12 @@ export class CanvasManager {
                 (i + 1) * (this.beatWidth * this.zoom),
                 this.topbarHeight,
                 1,
-                amountOfTracks * this.trackHeight
+                this.tracks * this.trackHeight
             );
         }
     }
 
-    drawTopbar() {
+    private drawTopbar() {
         const savedTransform = this.ctx.getTransform();
         this.ctx.setTransform(1, 0, 0, 1, savedTransform.e, 0);
 
@@ -91,18 +94,53 @@ export class CanvasManager {
         this.ctx.setTransform(savedTransform);
     }
 
+    private drawTimeIndicator() {
+        const savedTransform = this.ctx.getTransform();
+        this.ctx.setTransform(1, 0, 0, 1, savedTransform.e, 0);
+        this.ctx.translate(this.playheadPosition * this.zoom, 0);
+
+        const center = 0;
+        const width = 18;
+        const height = 24;
+
+        // Line
+        this.ctx.fillStyle = 'oklch(1 0 22 / 10%)';
+        this.ctx.fillRect(0, height, 1, this.canvas.height);
+
+        // Hand
+        this.ctx.beginPath();
+        this.ctx.moveTo((width / 2) * -1, 0); // Set starting point at top left
+        this.ctx.lineTo(width / 2, 0); // Straight line to top right
+        this.ctx.lineTo(width / 2, height / 3); // Top right straight vertical
+        this.ctx.quadraticCurveTo(4, height, center, height); // Right curve to point
+        this.ctx.quadraticCurveTo(-4, height, (width / 2) * -1, height / 3); // Left curve to point
+        this.ctx.lineTo((width / 2) * -1, 0); // Top left straight vertical
+
+        this.ctx.closePath();
+
+        this.ctx.fillStyle = 'oklch(0.3457 0.0041 285.97 / 70%)';
+        this.ctx.fill();
+
+        this.ctx.lineWidth = 1;
+
+        this.ctx.setTransform(savedTransform);
+    }
+
     drawObjects() {
         this.objects.forEach((object) => object.draw());
     }
 
-    render() {
-        this.drawGrid(10);
-        this.drawObjects();
-        this.drawTopbar();
-    }
-
     clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    render() {
+        this.clear();
+
+        this.drawGrid();
+        this.drawObjects();
+        this.drawTopbar();
+        this.drawTimeIndicator();
     }
 
     // Event Handlers
@@ -112,14 +150,15 @@ export class CanvasManager {
         const newX = currentTransform.e + e.deltaY * -1;
         const newY = currentTransform.f + e.deltaY * -1;
 
+        // Clamp zoom to 0.5
         if (e.ctrlKey) {
             e.preventDefault();
             this.zoom = Math.max(this.zoom + (e.deltaY / 1000) * -1, 0.5);
-            this.clear();
             this.render();
             return;
         }
 
+        // Min clamp scroll to 0
         if (e.shiftKey) {
             if (newX > 0) {
                 return;
@@ -150,7 +189,6 @@ export class CanvasManager {
             });
         }
 
-        this.clear();
         this.render();
     }
 
@@ -159,25 +197,29 @@ export class CanvasManager {
 
         this.objects.forEach((object) => object.mouseMove(x, y));
 
+        let needsRender = false;
+
         if (
             this.draggedObject !== undefined &&
             this.dragStart !== undefined &&
             this.dragStartBeat !== undefined
         ) {
             const dragDiff = x - this.dragStart.x;
-
             const beatDiff = Math.round(dragDiff / (this.beatWidth * this.zoom));
+
+            const track = this.getTrackByYCoords(y);
+            if (track && track !== this.draggedObject.track) {
+                this.draggedObject.track = track;
+                needsRender = true;
+            }
 
             // Only rerender if the beat actually changes
             if (this.draggedObject.startBeat !== this.dragStartBeat + beatDiff) {
                 this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
-
-                this.clear();
-                this.render();
+                needsRender = true;
             }
 
-            // this.draggedObject.startBeat = this.dragStartBeat + beatDiff;
-            // this.scheduleRender();
+            if (needsRender) this.render();
         }
     }
 
@@ -200,6 +242,47 @@ export class CanvasManager {
         }
     }
 
+    // Actions
+    startPlayback() {
+        Tone.getTransport().start();
+        this.startPlayheadAnimation();
+    }
+
+    pausePlayback() {
+        Tone.getTransport().pause();
+        this.stopPlayheadAnimation();
+    }
+
+    stopPlayback() {
+        Tone.getTransport().stop();
+        this.playheadPosition = 0;
+        this.stopPlayheadAnimation();
+        this.render();
+    }
+
+    private startPlayheadAnimation() {
+        Tone.getTransport().set({ bpm: this.bpm });
+
+        const animate = () => {
+            // Get current position in beats
+            this.playheadPosition =
+                (this.bpm / 60) * Tone.getTransport().seconds * this.beatWidth * this.zoom;
+
+            this.render();
+
+            this.rafId = requestAnimationFrame(animate);
+        };
+
+        animate();
+    }
+
+    private stopPlayheadAnimation() {
+        if (this.rafId !== null) {
+            cancelAnimationFrame(this.rafId);
+            this.rafId = null;
+        }
+    }
+
     // Helpers
     private mouseToCanvasCoords(mouseX: number, mouseY: number) {
         const rect = this.canvas.getBoundingClientRect();
@@ -208,18 +291,15 @@ export class CanvasManager {
         return { x, y };
     }
 
-    private getTrackByCoords(x: number, y: number) {
-        //
-    }
+    private getTrackByYCoords(y: number): number | undefined {
+        const adjustedY = y - this.topbarHeight;
 
-    private scheduleRender() {
-        if (this.needsRender) return;
+        if (adjustedY < 0 || adjustedY > this.tracks * this.trackHeight) return undefined;
 
-        this.needsRender = true;
-        this.rafId = requestAnimationFrame(() => {
-            this.clear();
-            this.render();
-            this.needsRender = false;
-        });
+        const trackIndex = Math.floor(adjustedY / this.trackHeight);
+
+        if (trackIndex >= 0 && trackIndex < this.tracks) {
+            return trackIndex + 1;
+        }
     }
 }
